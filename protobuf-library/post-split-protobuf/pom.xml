@@ -24,7 +24,7 @@
       <artifactId>protobuf-api</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-    <!-- Bring in a Java library built with Protobuf-Java -->
+    <!-- Bring in existing Java SDK library built with Protobuf-Java -->
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-speech</artifactId>

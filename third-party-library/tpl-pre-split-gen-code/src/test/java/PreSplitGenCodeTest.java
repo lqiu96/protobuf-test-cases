@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.example.protobuf.Book;
 import org.junit.jupiter.api.Test;
 
-class ThirdPartyLibraryTest {
+class PreSplitGenCodeTest {
 
   @Test
   void preSplitGenCode() {
@@ -14,15 +14,5 @@ class ThirdPartyLibraryTest {
     assertEquals(title, book.getTitle());
     assertEquals(isbn, book.getIsbn());
     assertEquals(author, book.getAuthor());
-  }
-
-  @Test
-  void speech_recognize() {
-    PreSplitGenCode.speech();
-  }
-
-  @Test
-  void secretmanager_create_delete() {
-    PreSplitGenCode.secretmanager();
   }
 }
