@@ -28,5 +28,10 @@
       <groupId>org.example</groupId>
       <artifactId>post-split-newer</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-kms</artifactId>
+      <version>protobuf-shading-within-module</version>
+    </dependency>
   </dependencies>
 </project>

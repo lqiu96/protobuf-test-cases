@@ -18,6 +18,7 @@
   </properties>
 
   <dependencies>
+    <!-- Third Party Library has a version lower than what the customer brings in -->
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>protobuf-api</artifactId>
@@ -26,6 +27,11 @@
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>post-split-older</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-kms</artifactId>
+      <version>protobuf-shading-within-module</version>
     </dependency>
   </dependencies>
 
