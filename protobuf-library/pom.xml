@@ -23,8 +23,7 @@
   </properties>
 
   <modules>
-    <module>post-split-older</module>
-    <module>post-split-newer</module>
+    <module>post-split-protobuf</module>
     <module>pre-split-gen-code</module>
   </modules>
 
@@ -37,7 +36,7 @@
       </dependency>
       <dependency>
         <groupId>org.example</groupId>
-        <artifactId>post-split-newer</artifactId>
+        <artifactId>post-split-protobuf</artifactId>
         <version>1.0-SNAPSHOT</version>
       </dependency>
       <dependency>

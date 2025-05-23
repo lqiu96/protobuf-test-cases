@@ -13,8 +13,7 @@
   <artifactId>third-party-library</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>tpl-post-split-older</module>
-    <module>tpl-post-split-newer</module>
+    <module>tpl-post-split-protobuf</module>
     <module>tpl-pre-split-gen-code</module>
   </modules>
 
