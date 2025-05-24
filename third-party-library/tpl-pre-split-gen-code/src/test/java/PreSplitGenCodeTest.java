@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 class PreSplitGenCodeTest {
 
   @Test
-  void preSplitGenCode() {
+  void createBook() {
     String author = "myBookAuthor";
     int isbn = 1234;
     String title = "myBookTitle";
-    Book book = PreSplitGenCode.book(author, isbn, title);
+    Book book = PreSplitGenCode.createBook(author, isbn, title);
     assertEquals(title, book.getTitle());
     assertEquals(isbn, book.getIsbn());
     assertEquals(author, book.getAuthor());

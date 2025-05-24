@@ -1,14 +1,36 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
+import com.google.protobuf.Message;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
+// These tests cases test that existing client libraries in the Java SDK
+// compiled with Protobuf-Java are able to run with the new post-split runtimes
 class PreSplitTest {
 
   @Test
-  void speech_recognize() {
-    PreSplit.speech();
+  void textFormat_protobufSdk() {
+    assertEquals("value: \"Value\"\n", PreSplit.textFormat());
   }
 
   @Test
-  void secretmanager_create_delete() {
-    PreSplit.secretmanager();
+  void messages_instanceOf_protobufApi() {
+    List<Message> messages = PreSplit.messages();
+    for (Message message : messages) {
+      assertInstanceOf(com.google.protobuf.GeneratedMessageV3.class, message);
+      assertInstanceOf(com.google.protobuf.AbstractMessage.class, message);
+      assertInstanceOf(com.google.protobuf.Message.class, message);
+    }
+  }
+
+  @Test
+  void speech_recognize() {
+    PreSplit.speechRecognize();
+  }
+
+  @Test
+  void secretmanager_CRUD() {
+    PreSplit.secretManagerCRUD();
   }
 }

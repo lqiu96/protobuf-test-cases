@@ -2,18 +2,41 @@ import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.UpdateSecretRequest;
 import com.google.cloud.speech.v1.RecognitionAudio;
 import com.google.cloud.speech.v1.RecognitionConfig;
 import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
+import com.google.protobuf.Any;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
+import com.google.protobuf.Message;
+import com.google.protobuf.TextFormat;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class PreSplit {
-  public static void speech() {
+
+  // TextFormat is now in Protobuf-Sdk in the post-split repo
+  public static String textFormat() {
+    return TextFormat.printer()
+        .printToString(
+            Any.newBuilder().setValue(ByteString.copyFrom("Value", StandardCharsets.UTF_8)));
+  }
+
+  public static List<Message> messages() {
+    return List.of(
+        SpeechRecognitionResult.newBuilder().build(),
+        Secret.newBuilder().build(),
+        RecognitionConfig.newBuilder().build(),
+        Replication.newBuilder().build());
+  }
+
+  // Speech has custom RPCs (recognize)
+  public static void speechRecognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
       RecognitionConfig config =
@@ -35,7 +58,8 @@ public class PreSplit {
     }
   }
 
-  public static void secretmanager() {
+  // Use SecretManager API to run through the basic CRUD operations
+  public static void secretManagerCRUD() {
     String secretId = "lawrenceSecret";
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
@@ -44,17 +68,26 @@ public class PreSplit {
       Duration ttl = Duration.newBuilder().setSeconds(900).build();
 
       Secret secret =
-          Secret.newBuilder()
-              .setReplication(
-                  Replication.newBuilder()
-                      .setAutomatic(Replication.Automatic.newBuilder().build())
-                      .build())
-              .setTtl(ttl)
-              .build();
+          secretManagerServiceClient.createSecret(
+              projectName,
+              secretId,
+              Secret.newBuilder()
+                  .setReplication(
+                      Replication.newBuilder()
+                          .setAutomatic(Replication.Automatic.newBuilder().build())
+                          .build())
+                  .setTtl(ttl)
+                  .build());
+      secretManagerServiceClient.updateSecret(
+          UpdateSecretRequest.newBuilder()
+              .setSecret(secret.toBuilder().setTtl(Duration.newBuilder().setSeconds(1000)))
+              .build());
 
-      Secret createdSecret = secretManagerServiceClient.createSecret(projectName, secretId, secret);
-
-      secretManagerServiceClient.deleteSecret(createdSecret.getName());
+      SecretManagerServiceClient.ListSecretsPagedResponse listSecretsPagedResponse =
+          secretManagerServiceClient.listSecrets(projectName);
+      for (Secret s : listSecretsPagedResponse.iterateAll()) {
+        secretManagerServiceClient.deleteSecret(s.getName());
+      }
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
