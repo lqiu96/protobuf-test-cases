@@ -15,6 +15,7 @@
   <modules>
     <module>tpl-post-split-protobuf</module>
     <module>tpl-pre-split-gen-code</module>
+    <module>tpl-pre-split-protobuf</module>
   </modules>
 
   <dependencyManagement>

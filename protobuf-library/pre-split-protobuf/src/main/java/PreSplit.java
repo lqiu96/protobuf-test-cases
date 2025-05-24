@@ -8,17 +8,11 @@ import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
-import com.google.protobuf.Any;
 import com.google.protobuf.Duration;
 import java.io.IOException;
 import java.util.List;
 
-public class PostSplitNewer {
-
-  public static Any any() {
-    return Any.newBuilder().build();
-  }
-
+public class PreSplit {
   public static void speech() {
     try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
