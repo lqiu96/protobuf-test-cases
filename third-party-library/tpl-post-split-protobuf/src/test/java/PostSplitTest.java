@@ -18,7 +18,7 @@ class PostSplitTest {
   }
 
   @Test
-  void message_instaceOf_shadedProtobuf() {
+  void message_instanceOf_shadedProtobuf() {
     List<Message> messages = PostSplit.messages();
     for (Message message : messages) {
       assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV3.class, message);
@@ -30,5 +30,15 @@ class PostSplitTest {
   @Test
   void kmsList() {
     PostSplit.kmsList();
+  }
+
+  @Test
+  void speechRecognize() {
+    PostSplit.speechRecognize();
+  }
+
+  @Test
+  void secretManagerCRUD() {
+    PostSplit.secretManagerCRUD();
   }
 }
