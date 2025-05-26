@@ -5,7 +5,7 @@ syntax = "proto3";
 package com.book;
 
 option java_multiple_files = true;
-option java_package = "com.example.protobuf.older";
+option java_package = "com.example.protobuf";
 option java_outer_classname = "BookProtos";
 
 message Book {

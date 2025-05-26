@@ -13,8 +13,8 @@
   <artifactId>customer-protos</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>protos-older-runtime</module>
-    <module>protos-newer-runtime</module>
+    <module>customer-protos-post-split-runtime</module>
+    <module>customer-protos-pre-split-runtime</module>
   </modules>
 
   <properties>

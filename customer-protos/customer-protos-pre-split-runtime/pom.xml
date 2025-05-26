@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>protos-older-runtime</artifactId>
+  <artifactId>customer-protos-pre-split-runtime</artifactId>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -18,16 +18,13 @@
   </properties>
 
   <dependencies>
+    <!-- Customer uses pre-split protobuf to generate protos and run -->
     <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>protobuf-api</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.25.5</version>
     </dependency>
-    <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>protobuf-sdk</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
+    <!-- Shaded module uses post-split runtime (protobuf-api) -->
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
