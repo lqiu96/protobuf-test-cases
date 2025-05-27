@@ -10,9 +10,23 @@ import com.google.cloud.kms.v1.ListKeyRingsRequest;
 import com.google.cloud.kms.v1.LocationName;
 import com.google.cloud.kms.v1.MacSignResponse;
 import com.google.cloud.kms.v1.ProtectionLevel;
+import com.google.cloud.secretmanager.v1.ProjectName;
+import com.google.cloud.secretmanager.v1.Replication;
+import com.google.cloud.secretmanager.v1.Secret;
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.UpdateSecretRequest;
+import com.google.cloud.speech.v1.RecognitionAudio;
+import com.google.cloud.speech.v1.RecognitionConfig;
+import com.google.cloud.speech.v1.RecognizeResponse;
+import com.google.cloud.speech.v1.SpeechClient;
+import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
+import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+
+import com.google.protobuf.Duration;
 import org.junit.jupiter.api.Test;
 
 public class CustomerProtosPostSplitRuntimeTest {
@@ -86,7 +100,8 @@ public class CustomerProtosPostSplitRuntimeTest {
   }
 
   // Speech has custom RPCs (recognize)
-  public static void speechRecognize() {
+  @Test
+  void speech_recognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
       RecognitionConfig config =
@@ -109,7 +124,8 @@ public class CustomerProtosPostSplitRuntimeTest {
   }
 
   // Use SecretManager API to run through the basic CRUD operations
-  public static void secretManagerCRUD() {
+  @Test
+  void secret_manager_CRUD() {
     String secretId = "lawrenceSecret";
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {

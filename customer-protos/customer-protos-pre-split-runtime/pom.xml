@@ -22,24 +22,24 @@
     <dependency>
       <groupId>com.google.protobuf</groupId>
       <artifactId>protobuf-java</artifactId>
-      <version>3.25.5</version>
+      <version>${protobuf-java.version}</version>
     </dependency>
 
     <!-- Shaded module uses post-split runtime (protobuf-api) -->
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>
-      <version>protobuf-shading-within-module</version>
+      <version>${shading.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-speech</artifactId>
-      <version>protobuf-shading-within-module</version>
+      <version>${shading.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-secretmanager</artifactId>
-      <version>protobuf-shading-within-module</version>
+      <version>${shading.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

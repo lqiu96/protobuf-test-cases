@@ -17,23 +17,12 @@
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <libraries-bom.version>26.60.0</libraries-bom.version>
-    <shading.version>protobuf-shading-v1</shading.version>
+    <shading.version>protobuf-shading-within-module</shading.version>
     <protobuf-java.version>3.25.5</protobuf-java.version>
-    <protobuf-sdk-error.version>error-1.0-SNAPSHOT</protobuf-sdk-error.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>com.google.cloud</groupId>
-        <artifactId>google-cloud-kms</artifactId>
-        <version>${shading.version}</version>
-      </dependency>
-<!--      <dependency>-->
-<!--        <groupId>org.example</groupId>-->
-<!--        <artifactId>protobuf-sdk</artifactId>-->
-<!--        <version>${protobuf-sdk-error.version}</version>-->
-<!--      </dependency>-->
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
