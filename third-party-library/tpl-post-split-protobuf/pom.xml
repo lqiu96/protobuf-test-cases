@@ -24,7 +24,7 @@
       <artifactId>protobuf-api</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-    <!-- This Protobuf-Sdk version should be required as post-split-protobuf does not include it as dep -->
+    <!-- Bring in protobuf-sdk to test non gen code methods -->
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>protobuf-sdk</artifactId>

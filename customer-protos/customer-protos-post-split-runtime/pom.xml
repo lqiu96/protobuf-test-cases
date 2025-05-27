@@ -24,14 +24,14 @@
       <artifactId>protobuf-api</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
-    <!-- Dependency is needed as GeneratedMessageV3 is required from the gen code -->
+    <!-- Customer needs this dependency is needed as GeneratedMessageV3 is required from the gen code -->
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>protobuf-sdk</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
-    <!-- Bring in the shaded Java SDK modules -->
+    <!-- Bring in the shaded Java SDK modules (protobuf-api), does not bring in protobuf-sdk -->
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>

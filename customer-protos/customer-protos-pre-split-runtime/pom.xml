@@ -25,7 +25,7 @@
       <version>${protobuf-java.version}</version>
     </dependency>
 
-    <!-- Shaded module uses post-split runtime (protobuf-api) -->
+    <!-- Shaded module uses post-split runtime (protobuf-api), does not bring in protobuf-sdk -->
     <dependency>
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-kms</artifactId>

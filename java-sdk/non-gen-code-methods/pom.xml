@@ -23,6 +23,7 @@
       <artifactId>google-cloud-kms</artifactId>
       <version>${shading.version}</version>
     </dependency>
+    <!-- Bring in protobuf-sdk to test non gen code methods -->
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>protobuf-sdk</artifactId>
