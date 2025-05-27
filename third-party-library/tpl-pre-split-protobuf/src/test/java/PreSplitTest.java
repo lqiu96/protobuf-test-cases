@@ -1,8 +1,6 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.protobuf.Message;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -16,24 +14,19 @@ class PreSplitTest {
   }
 
   @Test
-  void messages_instanceOf_protobufApi() {
-    List<Message> messages = PreSplit.messages();
-    for (Message message : messages) {
-      assertInstanceOf(com.google.protobuf.GeneratedMessageV3.class, message);
-      assertInstanceOf(com.google.protobuf.AbstractMessage.class, message);
-      assertInstanceOf(com.google.protobuf.Message.class, message);
-    }
+  void messages_instanceOf_protobufApi_throwsVerifyError() {
+    assertThrows(VerifyError.class, PreSplit::messages);
   }
 
   @Timeout(value = 5)
   @Test
-  void speech_recognize() {
-    PreSplit.speechRecognize();
+  void speech_recognize_throwsVerifyError() {
+    assertThrows(VerifyError.class, PreSplit::speechRecognize);
   }
 
   @Timeout(value = 5)
   @Test
-  void secret_manager_CRUD() {
-    PreSplit.secretManagerCRUD();
+  void secret_manager_CRUD_throwsVerifyError() {
+    assertThrows(VerifyError.class, PreSplit::secretManagerCRUD);
   }
 }

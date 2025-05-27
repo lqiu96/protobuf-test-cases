@@ -22,9 +22,12 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Duration;
+import com.google.protobuf.FieldMask;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
 import com.google.protobuf.Duration;
 import org.junit.jupiter.api.Test;
@@ -85,21 +88,23 @@ public class CustomerProtosPostSplitRuntimeTest {
 
   @Timeout(value = 5)
   @Test
-  void kms_list() {
-    try (KeyManagementServiceClient keyManagementServiceClient =
-        KeyManagementServiceClient.create()) {
-      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
-          keyManagementServiceClient.listKeyRings(
-              ListKeyRingsRequest.newBuilder()
-                  .setParent(LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION")).toString())
-                  .build());
-      for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
-        System.out.println(keyRing);
+    void kms_list() {
+      try (KeyManagementServiceClient keyManagementServiceClient =
+          KeyManagementServiceClient.create()) {
+        KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
+            keyManagementServiceClient.listKeyRings(
+                ListKeyRingsRequest.newBuilder()
+                    .setParent(
+                        LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                            .toString())
+                    .build());
+        for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
+          System.out.println(keyRing);
+        }
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
-    } catch (IOException e) {
-      throw new RuntimeException(e);
     }
-  }
 
   // Speech has custom RPCs (recognize)
   @Timeout(value = 5)
@@ -130,7 +135,7 @@ public class CustomerProtosPostSplitRuntimeTest {
   @Timeout(value = 5)
   @Test
   void secret_manager_CRUD() {
-    String secretId = "lawrenceSecret";
+    String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
       ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
@@ -150,6 +155,7 @@ public class CustomerProtosPostSplitRuntimeTest {
                   .build());
       secretManagerServiceClient.updateSecret(
           UpdateSecretRequest.newBuilder()
+              .setUpdateMask(FieldMask.newBuilder().addPaths("ttl").build())
               .setSecret(secret.toBuilder().setTtl(Duration.newBuilder().setSeconds(1000)))
               .build());
 

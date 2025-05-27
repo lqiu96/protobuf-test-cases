@@ -57,7 +57,9 @@ class GetterSetterTest {
       KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
           keyManagementServiceClient.listKeyRings(
               ListKeyRingsRequest.newBuilder()
-                  .setParent(LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION")).toString())
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
                   .build());
       for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
         System.out.println(keyRing);

@@ -23,11 +23,13 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Duration;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.UUID;
 
-import com.google.protobuf.Duration;
+import com.google.protobuf.FieldMask;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -93,7 +95,7 @@ class CustomerProtosPreSplitRuntimeTest {
     assertInstanceOf(com.google.protobuf.Message.class, response);
   }
 
-  @Timeout(value = 5)
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
@@ -101,7 +103,9 @@ class CustomerProtosPreSplitRuntimeTest {
       KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
           keyManagementServiceClient.listKeyRings(
               ListKeyRingsRequest.newBuilder()
-                  .setParent(LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION")).toString())
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
                   .build());
       for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
         System.out.println(keyRing);
@@ -112,7 +116,7 @@ class CustomerProtosPreSplitRuntimeTest {
   }
 
   // Speech has custom RPCs (recognize)
-  @Timeout(value = 5)
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void speech_recognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
@@ -137,10 +141,10 @@ class CustomerProtosPreSplitRuntimeTest {
   }
 
   // Use SecretManager API to run through the basic CRUD operations
-  @Timeout(value = 5)
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void secret_manager_CRUD() {
-    String secretId = "lawrenceSecret";
+    String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
       ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
@@ -160,6 +164,7 @@ class CustomerProtosPreSplitRuntimeTest {
                   .build());
       secretManagerServiceClient.updateSecret(
           UpdateSecretRequest.newBuilder()
+              .setUpdateMask(FieldMask.newBuilder().addPaths("ttl").build())
               .setSecret(secret.toBuilder().setTtl(Duration.newBuilder().setSeconds(1000)))
               .build());
 

@@ -15,9 +15,11 @@ import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.Any;
 import com.google.protobuf.Duration;
+import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class PostSplit {
 
@@ -73,7 +75,7 @@ public class PostSplit {
 
   // Use SecretManager API to run through the basic CRUD operations
   public static void secretManagerCRUD() {
-    String secretId = "lawrenceSecret";
+    String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
       ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
@@ -93,6 +95,7 @@ public class PostSplit {
                   .build());
       secretManagerServiceClient.updateSecret(
           UpdateSecretRequest.newBuilder()
+              .setUpdateMask(FieldMask.newBuilder().addPaths("ttl").build())
               .setSecret(secret.toBuilder().setTtl(Duration.newBuilder().setSeconds(1000)))
               .build());
 
