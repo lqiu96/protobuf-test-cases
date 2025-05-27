@@ -28,19 +28,22 @@ class PostSplitTest {
     }
   }
 
-  @Timeout(value = 5)
+  /* Run the following tests in SEPARATE_THREAD as timeout isn't working
+  properly for these cases otherwise
+  */
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void kmsList() {
     PostSplit.kmsList();
   }
 
-  @Timeout(value = 5)
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void speechRecognize() {
     PostSplit.speechRecognize();
   }
 
-  @Timeout(value = 5)
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void secretManagerCRUD() {
     PostSplit.secretManagerCRUD();

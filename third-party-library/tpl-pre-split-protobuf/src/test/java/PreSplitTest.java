@@ -3,8 +3,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.protobuf.Message;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
