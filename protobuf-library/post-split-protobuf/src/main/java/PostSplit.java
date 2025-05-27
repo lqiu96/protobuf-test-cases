@@ -36,7 +36,7 @@ public class PostSplit {
       KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
           keyManagementServiceClient.listKeyRings(
               ListKeyRingsRequest.newBuilder()
-                  .setParent(LocationName.of("lawrence-test-project-2", "us-central1").toString())
+                  .setParent(LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION")).toString())
                   .build());
       for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
         System.out.println(keyRing);
@@ -74,7 +74,7 @@ public class PostSplit {
     String secretId = "lawrenceSecret";
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
-      ProjectName projectName = ProjectName.of("lawrence-test-project-2");
+      ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
 
       Duration ttl = Duration.newBuilder().setSeconds(900).build();
 

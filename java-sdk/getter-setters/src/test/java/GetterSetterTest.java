@@ -12,6 +12,7 @@ import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 class GetterSetterTest {
 
@@ -48,6 +49,7 @@ class GetterSetterTest {
     assertEquals(ProtectionLevel.EXTERNAL, macSignResponse.getProtectionLevel());
   }
 
+  @Timeout(value = 5)
   @Test
   void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
@@ -55,7 +57,7 @@ class GetterSetterTest {
       KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
           keyManagementServiceClient.listKeyRings(
               ListKeyRingsRequest.newBuilder()
-                  .setParent(LocationName.of("lawrence-test-project-2", "us-central1").toString())
+                  .setParent(LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION")).toString())
                   .build());
       for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
         System.out.println(keyRing);

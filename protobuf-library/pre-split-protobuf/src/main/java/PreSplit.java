@@ -63,7 +63,7 @@ public class PreSplit {
     String secretId = "lawrenceSecret";
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
-      ProjectName projectName = ProjectName.of("lawrence-test-project-2");
+      ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
 
       Duration ttl = Duration.newBuilder().setSeconds(900).build();
 

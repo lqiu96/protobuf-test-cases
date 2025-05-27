@@ -1,15 +1,28 @@
 This repo is a multi-module maven project to test the impact of Protobuf-Java with the split Protobuf repo.
 
 # How to run
-A convenient `setup.sh` script can be run to pull in and download the required Maven artifacts.
+1. A convenient `setup.sh` script can be run to pull in and download the required Maven artifacts.
 The script will do three things:
-1. Pull the Protobuf-Java split repo artifacts and install them
-2. Pull sdk-platform-java repo and install the Java SDK runtime artifacts. These artifacts have protobuf-java shaded and
-have protobuf-api as their dependencies
-3. Pull google-cloud-java and install a few select handwritten libraries with protobuf shaded. The modules that are shaded 
-are kms, speech, and secretmanager as they cover a breadth of common requests in the java-sdk 
+- Pull the Protobuf-Java split repo artifacts and install them 
+- Pull sdk-platform-java repo and install the Java SDK runtime artifacts. These artifacts have protobuf-java shaded and
+have protobuf-api as their dependencies 
+- Pull google-cloud-java and install a few select handwritten libraries with protobuf shaded. The modules that are shaded 
+are kms, speech, and secretmanager as they cover a breadth of common requests in the java-sdk
 
-After running the setup script, run `mvn test` to run through all the test cases.
+2. After running the setup script, set two env var to be able to connect to your Google Cloud Project
+- PROJECT_ID: This is your Google Cloud Project ID
+- LOCATION: This will be the region that your requests will hit
+
+You can set these Env Vars by running the example command: `export PROJECT_ID={test_project_name}`
+
+Three Google Cloud services will need to have been activated and enabled:
+- KMS
+- Speech
+- SecretManager
+
+These APIs can be enabled via: https://cloud.google.com/service-usage/docs/enable-disable
+
+3. Once all the above is configured, run `mvn test` to run through all the test cases.
 
 # Modules
 The following modules are configured to test a matrix of potential customer environments

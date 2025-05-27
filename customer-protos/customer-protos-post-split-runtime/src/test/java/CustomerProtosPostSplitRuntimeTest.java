@@ -28,6 +28,7 @@ import java.util.List;
 
 import com.google.protobuf.Duration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 public class CustomerProtosPostSplitRuntimeTest {
 
@@ -82,6 +83,7 @@ public class CustomerProtosPostSplitRuntimeTest {
     assertInstanceOf(com.google.protobuf.Message.class, response);
   }
 
+  @Timeout(value = 5)
   @Test
   void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
@@ -89,7 +91,7 @@ public class CustomerProtosPostSplitRuntimeTest {
       KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
           keyManagementServiceClient.listKeyRings(
               ListKeyRingsRequest.newBuilder()
-                  .setParent(LocationName.of("lawrence-test-project-2", "us-central1").toString())
+                  .setParent(LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION")).toString())
                   .build());
       for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
         System.out.println(keyRing);
@@ -100,6 +102,7 @@ public class CustomerProtosPostSplitRuntimeTest {
   }
 
   // Speech has custom RPCs (recognize)
+  @Timeout(value = 5)
   @Test
   void speech_recognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
@@ -124,12 +127,13 @@ public class CustomerProtosPostSplitRuntimeTest {
   }
 
   // Use SecretManager API to run through the basic CRUD operations
+  @Timeout(value = 5)
   @Test
   void secret_manager_CRUD() {
     String secretId = "lawrenceSecret";
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
-      ProjectName projectName = ProjectName.of("lawrence-test-project-2");
+      ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
 
       Duration ttl = Duration.newBuilder().setSeconds(900).build();
 
