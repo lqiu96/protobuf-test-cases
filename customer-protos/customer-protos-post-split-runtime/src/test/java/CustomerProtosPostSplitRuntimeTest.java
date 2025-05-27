@@ -28,8 +28,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-
-import com.google.protobuf.Duration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -88,23 +86,23 @@ public class CustomerProtosPostSplitRuntimeTest {
 
   @Timeout(value = 5)
   @Test
-    void kms_list() {
-      try (KeyManagementServiceClient keyManagementServiceClient =
-          KeyManagementServiceClient.create()) {
-        KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
-            keyManagementServiceClient.listKeyRings(
-                ListKeyRingsRequest.newBuilder()
-                    .setParent(
-                        LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
-                            .toString())
-                    .build());
-        for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
-          System.out.println(keyRing);
-        }
-      } catch (IOException e) {
-        throw new RuntimeException(e);
+  void kms_list() {
+    try (KeyManagementServiceClient keyManagementServiceClient =
+        KeyManagementServiceClient.create()) {
+      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
+          keyManagementServiceClient.listKeyRings(
+              ListKeyRingsRequest.newBuilder()
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
+                  .build());
+      for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
+        System.out.println(keyRing);
       }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
+  }
 
   // Speech has custom RPCs (recognize)
   @Timeout(value = 5)

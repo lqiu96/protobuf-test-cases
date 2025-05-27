@@ -24,12 +24,11 @@ import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
+import com.google.protobuf.FieldMask;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-
-import com.google.protobuf.FieldMask;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
