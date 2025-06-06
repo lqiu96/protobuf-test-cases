@@ -1,8 +1,10 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+import com.example.protobuf.Book;
 import com.example.protobuf.GetBookRequest;
 import com.google.cloud.kms.v1.AsymmetricSignRequest;
+import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.kms.v1.Digest;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyRing;
@@ -24,14 +26,37 @@ import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Timestamp;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 public class CustomerProtosPostSplitRuntimeTest {
+
+  private static File bookFile;
+
+  @BeforeAll
+  static void setup() throws IOException {
+    bookFile = File.createTempFile("certificate", null);
+  }
+
+  @AfterAll
+  static void cleanUp() {
+    bookFile.delete();
+  }
 
   @Test
   void java_sdk_message() {
@@ -64,10 +89,18 @@ public class CustomerProtosPostSplitRuntimeTest {
   @Test
   void customer_proto_request() {
     GetBookRequest request = GetBookRequest.newBuilder().setIsbn(1234).build();
-    assertEquals(1234, request.getIsbn());
-    assertInstanceOf(com.google.protobuf.GeneratedMessageV3.class, request);
-    assertInstanceOf(com.google.protobuf.AbstractMessage.class, request);
-    assertInstanceOf(com.google.protobuf.Message.class, request);
+    System.out.println(request.getIsbn());
+
+    AsymmetricSignRequest request1 =
+            AsymmetricSignRequest.newBuilder()
+                    .setName("requestName")
+                    .setData(ByteString.copyFrom("Data", StandardCharsets.UTF_8))
+                    .setDigest(
+                            Digest.newBuilder()
+                                    .setSha256(ByteString.copyFrom("SHA", StandardCharsets.UTF_8))
+                                    .build())
+                    .build();
+    System.out.println(request1.getName());
   }
 
   @Test
@@ -165,5 +198,69 @@ public class CustomerProtosPostSplitRuntimeTest {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  // TODO: Create the book partial class
+  @Test
+  void mergeFrom() throws IOException {
+    // Issuer: randomIssuer, Parsed: true, Sha256FingerPrint: randomSHA256, NotAfterTimestamp: 1234 sec, 5678 nanos
+    Path path = Paths.get("src", "test", "resources","certificate_partial.txt");
+
+    Certificate.Builder certificateBuilder = Certificate.newBuilder();
+    certificateBuilder.mergeFrom(new FileInputStream(path.toFile()));
+
+    Certificate certificate = certificateBuilder.build();
+    assertEquals("randomIssuer", certificate.getIssuer());
+    assertEquals(true, certificate.getParsed());
+    assertEquals("randomSHA256", certificate.getSha256Fingerprint());
+    assertEquals(1234, certificate.getNotAfterTime().getSeconds());
+    assertEquals(5678, certificate.getNotAfterTime().getNanos());
+  }
+
+  @Test
+  void writeToFile_readFromFile() throws IOException {
+    Book book = Book.newBuilder()
+            .setIsbn(1234)
+            .setTitle("myTitle")
+            .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
+            .build();
+
+    try (FileOutputStream outputStream = new FileOutputStream(bookFile)) {
+      book.writeTo(outputStream);
+    }
+
+    Book newBook;
+    try (FileInputStream inputStream = new FileInputStream(bookFile)) {
+      newBook = Book.parseFrom(inputStream);
+    }
+    assertEquals(newBook.getIsbn(), book.getIsbn());
+    assertEquals(newBook.getTitle(), book.getTitle());
+    assertEquals(newBook.getAuthor(), book.getAuthor());
+  }
+
+  @Test
+  void parser_fromByteArray() throws InvalidProtocolBufferException {
+    Book book = Book.newBuilder()
+            .setIsbn(1234)
+            .setTitle("myTitle")
+            .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
+            .build();
+
+    Book result = Book.parser().parseFrom(book.toByteArray());
+    assertEquals(result.getIsbn(), book.getIsbn());
+    assertEquals(result.getTitle(), book.getTitle());
+    assertEquals(result.getAuthor(), book.getAuthor());
+  }
+
+  @Test
+  void message_clear() {
+    Book book = Book.newBuilder()
+            .setIsbn(1234)
+            .setTitle("myTitle")
+            .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
+            .build();
+    Book resetBook = book.toBuilder().clear().build();
+    assertEquals(0, resetBook.getIsbn());
+    assertEquals("", resetBook.getTitle());
   }
 }

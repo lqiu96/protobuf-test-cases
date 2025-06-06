@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.example</groupId>
-    <artifactId>protobuf-library</artifactId>
+    <artifactId>third-party-library</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>pre-split-protobuf</artifactId>
+  <artifactId>tpl-post-split-library-pre-split-runtime</artifactId>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>
@@ -18,22 +18,15 @@
   </properties>
 
   <dependencies>
-    <!-- Bring in existing Java SDK library compiled with Protobuf-Java -->
+    <!-- Test with using the Pre-Split Runtimes -->
     <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-kms</artifactId>
-      <version>2.65.0</version>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>3.25.5</version>
     </dependency>
     <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-speech</artifactId>
-      <version>4.55.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-secretmanager</artifactId>
-      <version>2.60.0</version>
+      <groupId>org.example</groupId>
+      <artifactId>post-split-protobuf</artifactId>
     </dependency>
   </dependencies>
-
 </project>

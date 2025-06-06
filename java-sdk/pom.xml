@@ -15,6 +15,7 @@
   <modules>
     <module>getter-setters</module>
     <module>non-gen-code-methods</module>
+    <module>gen-code-methods</module>
   </modules>
 
   <properties>

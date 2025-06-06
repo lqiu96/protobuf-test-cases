@@ -7,9 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-// These tests cases test that shaded client libraries in the Java SDK
-// compiled with Split-Protobuf are able to run with post-split runtimes
-class PostSplitTest {
+class PostSplitCodePostSplitRuntimeTest {
 
   @Test
   void any() {
@@ -40,5 +38,10 @@ class PostSplitTest {
   @Test
   void secretManagerCRUD() {
     PostSplit.secretManagerCRUD();
+  }
+
+  @Test
+  void notebookOperations() {
+    PostSplit.notebooksOperations();
   }
 }

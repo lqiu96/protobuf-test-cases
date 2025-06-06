@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>tpl-pre-split-protobuf</artifactId>
+  <artifactId>tpl-pre-split-library-post-split-runtime</artifactId>
 
   <properties>
     <maven.compiler.source>21</maven.compiler.source>

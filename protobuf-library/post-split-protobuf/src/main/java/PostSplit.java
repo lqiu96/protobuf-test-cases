@@ -1,7 +1,10 @@
+import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyRing;
 import com.google.cloud.kms.v1.ListKeyRingsRequest;
 import com.google.cloud.kms.v1.LocationName;
+import com.google.cloud.notebooks.v2.Instance;
+import com.google.cloud.notebooks.v2.NotebookServiceClient;
 import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
@@ -14,12 +17,23 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.Any;
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
+import com.google.protobuf.Timestamp;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class PostSplit {
 
@@ -107,5 +121,53 @@ public class PostSplit {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static void notebooksOperations() {
+    try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {
+      Instance instance =
+          notebookServiceClient
+              .createInstanceAsync(
+                  com.google.cloud.notebooks.v2.LocationName.of(
+                          System.getenv("PROJECT_ID"), System.getenv("ZONE"))
+                      .toString(),
+                  Instance.newBuilder().build(),
+                  "instance12345")
+              .get();
+      notebookServiceClient.deleteInstanceAsync(instance.getName()).get();
+    } catch (IOException | ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static Certificate mergeFrom(Path path) throws IOException {
+    Certificate.Builder certificateBuilder = Certificate.newBuilder();
+    certificateBuilder.mergeFrom(new FileInputStream(path.toFile()));
+
+    return certificateBuilder.build();
+  }
+
+  public static Certificate writeToFileReadFromFile(Certificate certificate) throws IOException {
+    File certificateFile = File.createTempFile("certificate", null);
+
+    try (FileOutputStream outputStream = new FileOutputStream(certificateFile)) {
+      certificate.writeTo(outputStream);
+    }
+
+    Certificate newCertificate;
+    try (FileInputStream inputStream = new FileInputStream(certificateFile)) {
+      newCertificate = Certificate.parseFrom(inputStream);
+    }
+
+    certificateFile.delete();
+    return newCertificate;
+  }
+
+  public static Certificate parserFromByteArray(Certificate certificate) throws InvalidProtocolBufferException {
+    return Certificate.parser().parseFrom(certificate.toByteArray());
+  }
+
+  public static Certificate messageClear(Certificate certificate) {
+    return certificate.toBuilder().clear().build();
   }
 }

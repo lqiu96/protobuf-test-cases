@@ -1,3 +1,4 @@
+import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
@@ -12,10 +13,16 @@ import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
 
 public class PreSplit {
@@ -91,5 +98,36 @@ public class PreSplit {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static Certificate mergeFrom(Path path) throws IOException {
+    Certificate.Builder certificateBuilder = Certificate.newBuilder();
+    certificateBuilder.mergeFrom(new FileInputStream(path.toFile()));
+
+    return certificateBuilder.build();
+  }
+
+  public static Certificate writeToFileReadFromFile(Certificate certificate) throws IOException {
+    File certificateFile = File.createTempFile("certificate", null);
+
+    try (FileOutputStream outputStream = new FileOutputStream(certificateFile)) {
+      certificate.writeTo(outputStream);
+    }
+
+    Certificate newCertificate;
+    try (FileInputStream inputStream = new FileInputStream(certificateFile)) {
+      newCertificate = Certificate.parseFrom(inputStream);
+    }
+
+    certificateFile.delete();
+    return newCertificate;
+  }
+
+  public static Certificate parserFromByteArray(Certificate certificate) throws InvalidProtocolBufferException {
+    return Certificate.parser().parseFrom(certificate.toByteArray());
+  }
+
+  public static Certificate messageClear(Certificate certificate) {
+    return certificate.toBuilder().clear().build();
   }
 }
