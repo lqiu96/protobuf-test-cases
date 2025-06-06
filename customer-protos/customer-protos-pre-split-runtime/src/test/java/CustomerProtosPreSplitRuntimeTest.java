@@ -6,7 +6,6 @@ import com.example.protobuf.Book;
 import com.example.protobuf.GetBookRequest;
 import com.google.api.gax.rpc.CancelledException;
 import com.google.cloud.kms.v1.AsymmetricSignRequest;
-import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.kms.v1.Digest;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyRing;
@@ -36,23 +35,38 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class CustomerProtosPreSplitRuntimeTest {
 
-  private static File bookFile;
+  private static Path bookPartialPath;
+  private static File tempBookFile;
+
+  private static final int PARTIAL_ISBN = 9999;
+  private static final String PARTIAL_TITLE = "myNewTitle";
+  private static final String PARTIAL_AUTHOR = "myNewAuthor";
 
   @BeforeAll
   static void setup() throws IOException {
-    bookFile = File.createTempFile("certificate", null);
+    tempBookFile = File.createTempFile("certificate", null);
+    bookPartialPath = Paths.get("src", "test", "resources", "book_partial.txt");
+
+    Book book = Book.newBuilder()
+            .setIsbn(PARTIAL_ISBN)
+            .setTitle(PARTIAL_TITLE)
+            .setAuthorBytes(ByteString.copyFrom(PARTIAL_AUTHOR, StandardCharsets.UTF_8))
+            .build();
+
+    try (FileOutputStream outputStream = new FileOutputStream(bookPartialPath.toFile())) {
+      book.writeTo(outputStream);
+    }
   }
 
   @AfterAll
   static void cleanUp() {
-    bookFile.delete();
+    tempBookFile.delete();
   }
 
   @Test
@@ -193,21 +207,15 @@ class CustomerProtosPreSplitRuntimeTest {
     }
   }
 
-  // TODO: Create the book partial class
   @Test
   void mergeFrom() throws IOException {
-    // Issuer: randomIssuer, Parsed: true, Sha256FingerPrint: randomSHA256, NotAfterTimestamp: 1234 sec, 5678 nanos
-    Path path = Paths.get("src", "test", "resources","certificate_partial.txt");
+    Book.Builder bookBuilder = Book.newBuilder();
+    bookBuilder.mergeFrom(new FileInputStream(bookPartialPath.toFile()));
 
-    Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(path.toFile()));
-
-    Certificate certificate = certificateBuilder.build();
-    assertEquals("randomIssuer", certificate.getIssuer());
-    assertEquals(true, certificate.getParsed());
-    assertEquals("randomSHA256", certificate.getSha256Fingerprint());
-    assertEquals(1234, certificate.getNotAfterTime().getSeconds());
-    assertEquals(5678, certificate.getNotAfterTime().getNanos());
+    Book book = bookBuilder.build();
+    assertEquals(PARTIAL_ISBN, book.getIsbn());
+    assertEquals(PARTIAL_TITLE, book.getTitle());
+    assertEquals(PARTIAL_AUTHOR, book.getAuthor());
   }
 
   @Test
@@ -218,12 +226,12 @@ class CustomerProtosPreSplitRuntimeTest {
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
             .build();
 
-    try (FileOutputStream outputStream = new FileOutputStream(bookFile)) {
+    try (FileOutputStream outputStream = new FileOutputStream(tempBookFile)) {
       book.writeTo(outputStream);
     }
 
     Book newBook;
-    try (FileInputStream inputStream = new FileInputStream(bookFile)) {
+    try (FileInputStream inputStream = new FileInputStream(tempBookFile)) {
       newBook = Book.parseFrom(inputStream);
     }
     assertEquals(newBook.getIsbn(), book.getIsbn());

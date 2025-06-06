@@ -18,32 +18,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GenCodeMethodsTest {
 
-  private static File certificateFile;
+  private static Path certificatePartialPath;
+  private static File tempCertificateFile;
+
+  private static final String PARTIAL_ISSUER = "randomIssuer";
+  private static final boolean PARTIAL_PARSED = true;
+  private static final String PARTIAL_SHA256 = "randomSHA256";
+  private static final int PARTIAL_SECONDS = 1234;
+  private static final int PARTIAL_NANOS = 5678;
 
   @BeforeAll
   static void setup() throws IOException {
-    certificateFile = File.createTempFile("certificate", null);
+    tempCertificateFile = File.createTempFile("certificate", null);
+    certificatePartialPath = Paths.get("src", "test", "resources", "certificate_partial.txt");
+
+    Certificate certificate = Certificate.newBuilder()
+            .setIssuer(PARTIAL_ISSUER)
+            .setParsed(PARTIAL_PARSED)
+            .setSha256FingerprintBytes(ByteString.copyFrom(PARTIAL_SHA256, StandardCharsets.UTF_8))
+            .setNotAfterTime(Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
+            .build();
+
+    try (FileOutputStream outputStream = new FileOutputStream(certificatePartialPath.toFile())) {
+      certificate.writeTo(outputStream);
+    }
   }
 
   @AfterAll
   static void cleanUp() {
-    certificateFile.delete();
+    tempCertificateFile.delete();
   }
 
   @Test
   void mergeFrom() throws IOException {
-    // Issuer: randomIssuer, Parsed: true, Sha256FingerPrint: randomSHA256, NotAfterTimestamp: 1234 sec, 5678 nanos
-    Path path = Paths.get("src", "test", "resources","certificate_partial.txt");
-
     Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(path.toFile()));
+    certificateBuilder.mergeFrom(new FileInputStream(certificatePartialPath.toFile()));
 
     Certificate certificate = certificateBuilder.build();
-    assertEquals("randomIssuer", certificate.getIssuer());
-    assertEquals(true, certificate.getParsed());
-    assertEquals("randomSHA256", certificate.getSha256Fingerprint());
-    assertEquals(1234, certificate.getNotAfterTime().getSeconds());
-    assertEquals(5678, certificate.getNotAfterTime().getNanos());
+    assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
+    assertEquals(PARTIAL_PARSED, certificate.getParsed());
+    assertEquals(PARTIAL_SHA256, certificate.getSha256Fingerprint());
+    assertEquals(PARTIAL_SECONDS, certificate.getNotAfterTime().getSeconds());
+    assertEquals(PARTIAL_NANOS, certificate.getNotAfterTime().getNanos());
   }
 
   @Test
@@ -55,12 +71,12 @@ class GenCodeMethodsTest {
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
 
-    try (FileOutputStream outputStream = new FileOutputStream(certificateFile)) {
+    try (FileOutputStream outputStream = new FileOutputStream(tempCertificateFile)) {
       certificate.writeTo(outputStream);
     }
 
     Certificate newCertificate;
-    try (FileInputStream inputStream = new FileInputStream(certificateFile)) {
+    try (FileInputStream inputStream = new FileInputStream(tempCertificateFile)) {
       newCertificate = Certificate.parseFrom(inputStream);
     }
     assertEquals(certificate.getIssuer(), newCertificate.getIssuer());
