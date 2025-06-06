@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import com.example.protobuf.Book;
 import com.example.protobuf.GetBookRequest;
 import com.google.cloud.kms.v1.AsymmetricSignRequest;
-import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.kms.v1.Digest;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyRing;
@@ -26,10 +25,9 @@ import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
-
+import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -37,9 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -59,7 +54,8 @@ public class CustomerProtosPostSplitRuntimeTest {
     tempBookFile = File.createTempFile("certificate", null);
     bookPartialPath = Paths.get("src", "test", "resources", "book_partial.txt");
 
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(PARTIAL_ISBN)
             .setTitle(PARTIAL_TITLE)
             .setAuthorBytes(ByteString.copyFrom(PARTIAL_AUTHOR, StandardCharsets.UTF_8))
@@ -109,14 +105,14 @@ public class CustomerProtosPostSplitRuntimeTest {
     System.out.println(request.getIsbn());
 
     AsymmetricSignRequest request1 =
-            AsymmetricSignRequest.newBuilder()
-                    .setName("requestName")
-                    .setData(ByteString.copyFrom("Data", StandardCharsets.UTF_8))
-                    .setDigest(
-                            Digest.newBuilder()
-                                    .setSha256(ByteString.copyFrom("SHA", StandardCharsets.UTF_8))
-                                    .build())
-                    .build();
+        AsymmetricSignRequest.newBuilder()
+            .setName("requestName")
+            .setData(ByteString.copyFrom("Data", StandardCharsets.UTF_8))
+            .setDigest(
+                Digest.newBuilder()
+                    .setSha256(ByteString.copyFrom("SHA", StandardCharsets.UTF_8))
+                    .build())
+            .build();
     System.out.println(request1.getName());
   }
 
@@ -230,7 +226,8 @@ public class CustomerProtosPostSplitRuntimeTest {
 
   @Test
   void writeToFile_readFromFile() throws IOException {
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(1234)
             .setTitle("myTitle")
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
@@ -251,7 +248,8 @@ public class CustomerProtosPostSplitRuntimeTest {
 
   @Test
   void parser_fromByteArray() throws InvalidProtocolBufferException {
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(1234)
             .setTitle("myTitle")
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
@@ -265,7 +263,8 @@ public class CustomerProtosPostSplitRuntimeTest {
 
   @Test
   void message_clear() {
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(1234)
             .setTitle("myTitle")
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))

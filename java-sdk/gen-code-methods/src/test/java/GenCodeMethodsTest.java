@@ -1,11 +1,9 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.google.cloud.kms.v1.Certificate;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -13,8 +11,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class GenCodeMethodsTest {
 
@@ -32,11 +31,13 @@ class GenCodeMethodsTest {
     tempCertificateFile = File.createTempFile("certificate", null);
     certificatePartialPath = Paths.get("src", "test", "resources", "certificate_partial.txt");
 
-    Certificate certificate = Certificate.newBuilder()
+    Certificate certificate =
+        Certificate.newBuilder()
             .setIssuer(PARTIAL_ISSUER)
             .setParsed(PARTIAL_PARSED)
             .setSha256FingerprintBytes(ByteString.copyFrom(PARTIAL_SHA256, StandardCharsets.UTF_8))
-            .setNotAfterTime(Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
+            .setNotAfterTime(
+                Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
             .build();
 
     try (FileOutputStream outputStream = new FileOutputStream(certificatePartialPath.toFile())) {
@@ -64,7 +65,8 @@ class GenCodeMethodsTest {
 
   @Test
   void writeToFile_readFromFile() throws IOException {
-    Certificate certificate = Certificate.newBuilder()
+    Certificate certificate =
+        Certificate.newBuilder()
             .setIssuer("Issuer")
             .setParsed(false)
             .setSha256FingerprintBytes(ByteString.copyFrom("SHA256", StandardCharsets.UTF_8))
@@ -81,14 +83,18 @@ class GenCodeMethodsTest {
     }
     assertEquals(certificate.getIssuer(), newCertificate.getIssuer());
     assertEquals(certificate.getParsed(), newCertificate.getParsed());
-    assertEquals(certificate.getSha256FingerprintBytes(), newCertificate.getSha256FingerprintBytes());
-    assertEquals(certificate.getNotAfterTime().getSeconds(), newCertificate.getNotAfterTime().getSeconds());
-    assertEquals(certificate.getNotAfterTime().getNanos(), newCertificate.getNotAfterTime().getNanos());
+    assertEquals(
+        certificate.getSha256FingerprintBytes(), newCertificate.getSha256FingerprintBytes());
+    assertEquals(
+        certificate.getNotAfterTime().getSeconds(), newCertificate.getNotAfterTime().getSeconds());
+    assertEquals(
+        certificate.getNotAfterTime().getNanos(), newCertificate.getNotAfterTime().getNanos());
   }
 
   @Test
   void parser_fromByteArray() throws InvalidProtocolBufferException {
-    Certificate certificate = Certificate.newBuilder()
+    Certificate certificate =
+        Certificate.newBuilder()
             .setIssuer("Issuer")
             .setParsed(false)
             .setSha256Fingerprint("SHA256")
@@ -105,7 +111,8 @@ class GenCodeMethodsTest {
 
   @Test
   void message_clear() {
-    Certificate certificate = Certificate.newBuilder()
+    Certificate certificate =
+        Certificate.newBuilder()
             .setIssuer("Issuer")
             .setParsed(false)
             .setSha256Fingerprint("SHA256")

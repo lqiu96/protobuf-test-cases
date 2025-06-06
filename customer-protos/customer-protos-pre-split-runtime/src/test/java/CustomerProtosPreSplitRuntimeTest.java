@@ -24,7 +24,7 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
-
+import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,8 +33,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
-
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -53,7 +51,8 @@ class CustomerProtosPreSplitRuntimeTest {
     tempBookFile = File.createTempFile("certificate", null);
     bookPartialPath = Paths.get("src", "test", "resources", "book_partial.txt");
 
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(PARTIAL_ISBN)
             .setTitle(PARTIAL_TITLE)
             .setAuthorBytes(ByteString.copyFrom(PARTIAL_AUTHOR, StandardCharsets.UTF_8))
@@ -220,7 +219,8 @@ class CustomerProtosPreSplitRuntimeTest {
 
   @Test
   void writeToFile_readFromFile() throws IOException {
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(1234)
             .setTitle("myTitle")
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
@@ -241,7 +241,8 @@ class CustomerProtosPreSplitRuntimeTest {
 
   @Test
   void parser_fromByteArray() throws InvalidProtocolBufferException {
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(1234)
             .setTitle("myTitle")
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
@@ -255,7 +256,8 @@ class CustomerProtosPreSplitRuntimeTest {
 
   @Test
   void message_clear() {
-    Book book = Book.newBuilder()
+    Book book =
+        Book.newBuilder()
             .setIsbn(1234)
             .setTitle("myTitle")
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))

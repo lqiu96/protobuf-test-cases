@@ -11,8 +11,6 @@ import com.google.cloud.kms.v1.ProtectionLevel;
 import com.google.protobuf.ByteString;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
-import com.google.protobuf.GeneratedMessageV3;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 

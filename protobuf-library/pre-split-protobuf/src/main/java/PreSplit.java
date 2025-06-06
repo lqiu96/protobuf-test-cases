@@ -16,7 +16,6 @@ import com.google.protobuf.Duration;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.TextFormat;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -123,7 +122,8 @@ public class PreSplit {
     return newCertificate;
   }
 
-  public static Certificate parserFromByteArray(Certificate certificate) throws InvalidProtocolBufferException {
+  public static Certificate parserFromByteArray(Certificate certificate)
+      throws InvalidProtocolBufferException {
     return Certificate.parser().parseFrom(certificate.toByteArray());
   }
 

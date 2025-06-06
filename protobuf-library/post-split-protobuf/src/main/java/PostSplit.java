@@ -17,20 +17,15 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.Any;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
-import com.google.protobuf.Timestamp;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -163,7 +158,8 @@ public class PostSplit {
     return newCertificate;
   }
 
-  public static Certificate parserFromByteArray(Certificate certificate) throws InvalidProtocolBufferException {
+  public static Certificate parserFromByteArray(Certificate certificate)
+      throws InvalidProtocolBufferException {
     return Certificate.parser().parseFrom(certificate.toByteArray());
   }
 
