@@ -26,22 +26,22 @@ class PostSplitCodePostSplitRuntimeTest {
   }
 
   @Test
-  void kmsList() {
+  void kms_list() {
     PostSplit.kmsList();
   }
 
   @Test
-  void speechRecognize() {
+  void speech_recognize() {
     PostSplit.speechRecognize();
   }
 
   @Test
-  void secretManagerCRUD() {
+  void secret_manager_CRUD() {
     PostSplit.secretManagerCRUD();
   }
 
   @Test
-  void notebookOperations() {
+  void notebook_operations() {
     PostSplit.notebooksOperations();
   }
 }

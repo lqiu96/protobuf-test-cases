@@ -2,12 +2,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.protobuf.Book;
-import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyRing;
-import com.google.cloud.kms.v1.ListKeyRingsRequest;
-import com.google.cloud.kms.v1.LocationName;
-import java.io.IOException;
-
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +10,8 @@ class CustomerBreakingChange {
 
   @Test
   void javasdk_notImpacted() {
-    KeyRing keyRing = KeyRing.newBuilder()
+    KeyRing keyRing =
+        KeyRing.newBuilder()
             .setName("KeyRingName")
             .setCreateTime(Timestamp.newBuilder().setSeconds(1234).build())
             .build();

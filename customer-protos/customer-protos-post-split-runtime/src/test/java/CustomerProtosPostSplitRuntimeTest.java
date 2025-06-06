@@ -168,7 +168,7 @@ public class CustomerProtosPostSplitRuntimeTest {
 
       for (SpeechRecognitionResult result : results) {
         SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-        System.out.printf("Transcription: %s%n", alternative.getTranscript());
+        assertEquals("how old is the Brooklyn Bridge", alternative.getTranscript());
       }
     } catch (IOException e) {
       throw new RuntimeException(e);

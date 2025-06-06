@@ -30,19 +30,19 @@ class PostSplitCodePreSplitRuntimeTest {
 
   @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
-  void kmsList() {
+  void kms_list() {
     PostSplit.kmsList();
   }
 
   @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
-  void speechRecognize() {
+  void speech_recognize() {
     PostSplit.speechRecognize();
   }
 
   @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
-  void secretManagerCRUD() {
+  void secret_manager_CRUD() {
     PostSplit.secretManagerCRUD();
   }
 }
