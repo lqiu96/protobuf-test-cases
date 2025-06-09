@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 class JavaSdkBreakingChange {
 
   @Test
-  void javasdk_impacted() {
+  void javasdk_notImpacted() {
     assertThrows(ExceptionInInitializerError.class, ListKeyRingsRequest::getDefaultInstance);
   }
 
