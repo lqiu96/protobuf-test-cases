@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 // These tests cases test that existing client libraries in the Java SDK
 // compiled with Protobuf-Java are able to run with the new post-split runtimes
-class PreSplitTest {
+class PreSplitCodePostSplitRuntimeTest {
 
   @Test
   void textFormat_protobufSdk() {
