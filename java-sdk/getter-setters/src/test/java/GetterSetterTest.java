@@ -17,13 +17,13 @@ import org.junit.jupiter.api.Timeout;
 class GetterSetterTest {
 
   @Test
-  void message() {
+  void message_get_set() {
     KeyRing keyRing = KeyRing.newBuilder().setName("KeyRingName").build();
     assertEquals("KeyRingName", keyRing.getName());
   }
 
   @Test
-  void request() {
+  void request_get_set() {
     AsymmetricSignRequest request =
         AsymmetricSignRequest.newBuilder()
             .setName("requestName")
@@ -39,7 +39,7 @@ class GetterSetterTest {
   }
 
   @Test
-  void response() {
+  void response_get_set() {
     MacSignResponse macSignResponse =
         MacSignResponse.newBuilder()
             .setName("responseName")
