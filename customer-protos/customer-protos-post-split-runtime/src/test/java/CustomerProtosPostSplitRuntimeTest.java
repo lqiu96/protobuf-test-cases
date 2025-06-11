@@ -54,6 +54,10 @@ public class CustomerProtosPostSplitRuntimeTest {
     tempBookFile = File.createTempFile("certificate", null);
     bookPartialPath = Paths.get("src", "test", "resources", "book_partial.txt");
 
+    File bookPartialFile = bookPartialPath.toFile();
+    // Create the directories if it doesn't already exist
+    bookPartialFile.getParentFile().mkdirs();
+
     Book book =
         Book.newBuilder()
             .setIsbn(PARTIAL_ISBN)
@@ -61,7 +65,7 @@ public class CustomerProtosPostSplitRuntimeTest {
             .setAuthorBytes(ByteString.copyFrom(PARTIAL_AUTHOR, StandardCharsets.UTF_8))
             .build();
 
-    try (FileOutputStream outputStream = new FileOutputStream(bookPartialPath.toFile())) {
+    try (FileOutputStream outputStream = new FileOutputStream(bookPartialFile)) {
       book.writeTo(outputStream);
     }
   }
