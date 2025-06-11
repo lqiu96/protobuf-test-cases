@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 /**
- * This tests that a third-party library that is compiled with Split-Protobuf is able to run
- * with Protobuf-Java. The third-party library has modules Post-Split Protobuf shaded in the Java SDK.
+ * This tests that a third-party library that is compiled with Split-Protobuf is able to run with
+ * Protobuf-Java. The third-party library has modules Post-Split Protobuf shaded in the Java SDK.
  */
 class PostSplitCodePreSplitRuntimeTest {
 
