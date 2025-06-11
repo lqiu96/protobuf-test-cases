@@ -5,7 +5,7 @@ import com.google.protobuf.TextFormat;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 
-class NonGenCodeMethodsTest {
+class JavaSdkNonGenCodeMethodsTest {
 
   @Test
   void testTextFormat() {

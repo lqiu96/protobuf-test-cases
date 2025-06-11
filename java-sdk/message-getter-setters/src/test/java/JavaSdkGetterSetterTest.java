@@ -9,7 +9,7 @@ import com.google.protobuf.ByteString;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
-class GetterSetterTest {
+class JavaSdkGetterSetterTest {
 
   @Test
   void message_get_set() {

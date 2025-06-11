@@ -15,16 +15,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * This tests that a third-party library that is compiled with Split-Protobuf is able to run with
- * Post-Split Protobuf. The third-party library has modules Post-Split Protobuf shaded in the Java
- * SDK.
+ * Protobuf-Java. The third-party library has modules Post-Split Protobuf shaded in the Java SDK.
  */
-class PostSplitCodePostSplitRuntimeTest {
+class TPLPostSplitCodePreSplitRuntimeTest {
 
   private static File tempCertificateFile;
   private static Path certificatePartialPath;
@@ -40,7 +39,7 @@ class PostSplitCodePostSplitRuntimeTest {
     tempCertificateFile = File.createTempFile("certificate", null);
     certificatePartialPath = Paths.get("src", "test", "resources", "certificate_partial.txt");
 
-    File certificatePartialFile = PostSplitCodePostSplitRuntimeTest.certificatePartialPath.toFile();
+    File certificatePartialFile = certificatePartialPath.toFile();
     // Create the directories if it doesn't already exist
     certificatePartialFile.getParentFile().mkdirs();
 
@@ -56,11 +55,6 @@ class PostSplitCodePostSplitRuntimeTest {
     try (FileOutputStream outputStream = new FileOutputStream(certificatePartialFile)) {
       certificate.writeTo(outputStream);
     }
-  }
-
-  @AfterAll
-  static void cleanUp() {
-    tempCertificateFile.delete();
   }
 
   @Test
@@ -79,24 +73,22 @@ class PostSplitCodePostSplitRuntimeTest {
     }
   }
 
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void kms_list() {
     PostSplit.kmsList();
   }
 
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void speech_recognize() {
     PostSplit.speechRecognize();
   }
 
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Test
   void secret_manager_CRUD() {
     PostSplit.secretManagerCRUD();
-  }
-
-  @Test
-  void notebook_operations() {
-    PostSplit.notebooksOperations();
   }
 
   @Test

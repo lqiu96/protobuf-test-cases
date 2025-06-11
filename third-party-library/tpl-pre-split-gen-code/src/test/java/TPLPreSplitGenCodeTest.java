@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
  * This tests a third party library that has Protobuf-Java gen code that is compiled with
  * Protobuf-Java, but run with Split-Protobuf
  */
-class PreSplitGenCodeTest {
+class TPLPreSplitGenCodeTest {
 
   @Test
   void createBook() {

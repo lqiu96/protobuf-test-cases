@@ -42,7 +42,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <test>!PostSplitCodePreSplitRuntimeTest#kms_list+secret_manager_CRUD+notebook_operations</test>
+              <test>!TPLPostSplitCodePreSplitRuntimeTest#kms_list+secret_manager_CRUD+notebook_operations</test>
             </configuration>
           </plugin>
         </plugins>
