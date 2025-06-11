@@ -13,9 +13,10 @@
   <artifactId>java-sdk</artifactId>
   <packaging>pom</packaging>
   <modules>
-    <module>getter-setters</module>
+    <module>message-getter-setters</module>
     <module>non-gen-code-methods</module>
     <module>gen-code-methods</module>
+    <module>request-response</module>
   </modules>
 
   <properties>
