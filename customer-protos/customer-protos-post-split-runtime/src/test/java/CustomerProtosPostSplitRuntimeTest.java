@@ -102,18 +102,10 @@ public class CustomerProtosPostSplitRuntimeTest {
   @Test
   void customer_proto_request() {
     GetBookRequest request = GetBookRequest.newBuilder().setIsbn(1234).build();
-    System.out.println(request.getIsbn());
-
-    AsymmetricSignRequest request1 =
-        AsymmetricSignRequest.newBuilder()
-            .setName("requestName")
-            .setData(ByteString.copyFrom("Data", StandardCharsets.UTF_8))
-            .setDigest(
-                Digest.newBuilder()
-                    .setSha256(ByteString.copyFrom("SHA", StandardCharsets.UTF_8))
-                    .build())
-            .build();
-    System.out.println(request1.getName());
+    assertEquals(1234, request.getIsbn());
+    assertInstanceOf(com.google.protobuf.GeneratedMessageV3.class, request);
+    assertInstanceOf(com.google.protobuf.AbstractMessage.class, request);
+    assertInstanceOf(com.google.protobuf.Message.class, request);
   }
 
   @Test
