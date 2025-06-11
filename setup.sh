@@ -43,14 +43,17 @@ git clone https://github.com/googleapis/google-cloud-java.git
 pushd google-cloud-java
 git checkout protobuf-shading-within-module
 mvn clean install -T 1C -Dflatten.skip -DskipTests -Dcheckstyle.skip -Dclirr.skip -Denforcer.skip -pl 'java-kms/google-cloud-kms,java-speech/google-cloud-speech,java-secretmanager/google-cloud-secretmanager,java-notebooks/google-cloud-notebooks' -am
+find . -name "*dependency-reduced-pom.xml" -delete
 
 # Install kms with protobuf-sdk shaded with breaking change (version: runtime-only-error)
 git checkout protobuf-shading-runtime-breaking-change-within-module
 mvn clean install -T 1C -Dflatten.skip -DskipTests -Dcheckstyle.skip -Dclirr.skip -Denforcer.skip -pl 'java-kms/google-cloud-kms' -am
+find . -name "*dependency-reduced-pom.xml" -delete
 
 # Install kms with protobuf-sdk shaded with breaking change (version: protoc-runtime-breaking-change)
 git checkout protoc-protobuf-shading-runtime-breaking-change-within-module
 mvn clean install -T 1C -Dflatten.skip -DskipTests -Dcheckstyle.skip -Dclirr.skip -Denforcer.skip -pl 'java-kms/google-cloud-kms' -am
+find . -name "*dependency-reduced-pom.xml" -delete
 popd
 
 popd
