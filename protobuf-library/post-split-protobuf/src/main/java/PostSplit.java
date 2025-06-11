@@ -119,6 +119,7 @@ public class PostSplit {
   }
 
   public static void notebooksOperations() {
+    String id = UUID.randomUUID().toString().substring(0, 6);
     try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {
       Instance instance =
           notebookServiceClient
@@ -127,7 +128,7 @@ public class PostSplit {
                           System.getenv("PROJECT_ID"), System.getenv("ZONE"))
                       .toString(),
                   Instance.newBuilder().build(),
-                  "instance12345")
+                  String.format("instance%s", id))
               .get();
       notebookServiceClient.deleteInstanceAsync(instance.getName()).get();
     } catch (IOException | ExecutionException | InterruptedException e) {

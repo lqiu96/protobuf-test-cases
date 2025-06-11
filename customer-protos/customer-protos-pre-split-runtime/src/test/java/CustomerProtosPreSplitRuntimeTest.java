@@ -1,10 +1,8 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.protobuf.Book;
 import com.example.protobuf.GetBookRequest;
-import com.google.api.gax.rpc.CancelledException;
 import com.google.cloud.kms.v1.AsymmetricSignRequest;
 import com.google.cloud.kms.v1.Digest;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
@@ -159,11 +157,7 @@ class CustomerProtosPreSplitRuntimeTest {
               .setLanguageCode("en-US")
               .build();
       RecognitionAudio audio = RecognitionAudio.newBuilder().setUri(gcsUri).build();
-      CancelledException cancelledException =
-          assertThrows(CancelledException.class, () -> speechClient.recognize(config, audio));
-      assertEquals(
-          "'void com.google.protobuf.SingleFieldBuilderV3.<init>(com.google.protobuf.Message, com.google.protobuf.Message$BuilderParent, boolean)'",
-          cancelledException.getCause().getCause().getMessage());
+      speechClient.recognize(config, audio);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
