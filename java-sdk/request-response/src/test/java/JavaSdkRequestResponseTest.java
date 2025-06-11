@@ -32,6 +32,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * These test cases test that the Java-Sdk can make calls to Google Cloud and parse the response.
+ * Each call to Google Cloud is done with both gRPC and HttpJson.
  */
 class JavaSdkRequestResponseTest {
 
@@ -46,13 +47,12 @@ class JavaSdkRequestResponseTest {
   void kms_list(KeyManagementServiceSettings settings) {
     try (KeyManagementServiceClient keyManagementServiceClient =
         KeyManagementServiceClient.create(settings)) {
-      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
-          keyManagementServiceClient.listKeyRings(
-              ListKeyRingsRequest.newBuilder()
-                  .setParent(
-                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
-                          .toString())
-                  .build());
+      keyManagementServiceClient.listKeyRings(
+          ListKeyRingsRequest.newBuilder()
+              .setParent(
+                  LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                      .toString())
+              .build());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
@@ -81,7 +81,7 @@ class JavaSdkRequestResponseTest {
 
       for (SpeechRecognitionResult result : results) {
         SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-        assertEquals("Transcription: how old is the Brooklyn Bridge", alternative.getTranscript());
+        assertEquals("how old is the Brooklyn Bridge", alternative.getTranscript());
       }
     } catch (IOException e) {
       throw new RuntimeException(e);
