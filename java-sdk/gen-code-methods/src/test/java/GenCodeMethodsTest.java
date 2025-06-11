@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 
 class GenCodeMethodsTest {
 
-  private static Path certificatePartialPath;
   private static File tempCertificateFile;
+  private static Path certificatePartialPath;
 
   private static final String PARTIAL_ISSUER = "randomIssuer";
   private static final boolean PARTIAL_PARSED = true;
