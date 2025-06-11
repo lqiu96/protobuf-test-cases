@@ -19,8 +19,8 @@
   </properties>
 
   <modules>
-    <module>customer-breaking-change</module>
-    <module>java-sdk-breaking-change</module>
+    <module>runtime-customer-breaking-change</module>
+    <module>runtime-java-sdk-breaking-change</module>
   </modules>
 
 </project>

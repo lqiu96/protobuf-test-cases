@@ -5,7 +5,7 @@ import com.example.protobuf.Book;
 import com.google.cloud.kms.v1.ListKeyRingsRequest;
 import org.junit.jupiter.api.Test;
 
-class JavaSdkBreakingChange {
+class ShadingRuntimeBreakingChangeJavaSdkTest {
 
   @Test
   void javasdk_notImpacted() {

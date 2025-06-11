@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>protoc-protobuf-runtime-breaking-change</artifactId>
+  <artifactId>protoc-breaking-change</artifactId>
   <packaging>pom</packaging>
   <modules>
     <module>protoc-customer-breaking-change</module>

@@ -14,7 +14,7 @@
   <packaging>pom</packaging>
   <modules>
     <module>runtime-only-breaking-change</module>
-    <module>protoc-protobuf-runtime-breaking-change</module>
+    <module>protoc-breaking-change</module>
   </modules>
 
   <properties>

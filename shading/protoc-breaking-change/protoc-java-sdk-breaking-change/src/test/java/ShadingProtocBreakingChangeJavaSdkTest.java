@@ -8,7 +8,7 @@ import com.google.protobuf.Timestamp;
 import com.shaded.google.protobuf.proto.GeneratedMessageV4;
 import org.junit.jupiter.api.Test;
 
-class ProtocJavaSdkBreakingChange {
+class ShadingProtocBreakingChangeJavaSdkTest {
 
   @Test
   void javasdk_notImpacted() {
