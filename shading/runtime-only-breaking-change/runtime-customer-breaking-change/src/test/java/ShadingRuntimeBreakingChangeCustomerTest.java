@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.protobuf.Book;
@@ -17,12 +18,15 @@ class ShadingRuntimeBreakingChangeCustomerTest {
             .build();
     assertEquals("KeyRingName", keyRing.getName());
     assertEquals(1234, keyRing.getCreateTime().getSeconds());
+
+    // Bundled version of Protobuf is used and doesn't throw a RuntimeException when invoked
+    assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV3.class, keyRing);
   }
 
-  // Customer is bringing in a major version of the unstable library
-  // Their code may experience breaking changes
   @Test
-  void customer_breakingChange() {
+  void customer_impacted() {
+    // The customer is using a version of protobuf-sdk that throws a RuntimeException. This version
+    // is different from the version bundled as part of the Java SDK.
     assertThrows(ExceptionInInitializerError.class, Book::getDefaultInstance);
   }
 }

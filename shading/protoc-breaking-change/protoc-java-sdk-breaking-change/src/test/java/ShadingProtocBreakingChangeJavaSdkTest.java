@@ -3,9 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.example.protobuf.Book;
 import com.google.cloud.kms.v1.KeyRing;
-import com.google.protobuf.GeneratedMessageV3;
 import com.google.protobuf.Timestamp;
-import com.shaded.google.protobuf.proto.GeneratedMessageV4;
 import org.junit.jupiter.api.Test;
 
 class ShadingProtocBreakingChangeJavaSdkTest {
@@ -20,9 +18,9 @@ class ShadingProtocBreakingChangeJavaSdkTest {
     assertEquals("KeyRingName", keyRing.getName());
     assertEquals(1234, keyRing.getCreateTime().getSeconds());
 
-    // This class is shaded with the internal GeneratedMessageV4, even though customer's
-    // protobuf-sdk has GeneratedMessageV3
-    assertInstanceOf(GeneratedMessageV4.class, keyRing);
+    // This Java SDK proto message is shaded with its own version of GeneratedMessageV4 from
+    // protobuf-sdk v2. It's an incompatible version with the version that the customer is using.
+    assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV4.class, keyRing);
   }
 
   @Test
@@ -32,6 +30,7 @@ class ShadingProtocBreakingChangeJavaSdkTest {
     assertEquals("myAuthor", book.getAuthor());
     assertEquals("myTitle", book.getTitle());
 
-    assertInstanceOf(GeneratedMessageV3.class, book);
+    // This version is from the customer defined version (protobuf-sdk v1)
+    assertInstanceOf(com.google.protobuf.GeneratedMessageV3.class, book);
   }
 }

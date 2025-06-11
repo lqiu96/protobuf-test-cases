@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Test;
 class ShadingRuntimeBreakingChangeJavaSdkTest {
 
   @Test
-  void javasdk_notImpacted() {
+  void javasdk_impacted() {
+    // The Java SDK is using a version of protobuf-sdk that throws a RuntimeException. This version
+    // is bundled as part of the Java SDK and is not the version the customer specified.
     assertThrows(ExceptionInInitializerError.class, ListKeyRingsRequest::getDefaultInstance);
   }
 
