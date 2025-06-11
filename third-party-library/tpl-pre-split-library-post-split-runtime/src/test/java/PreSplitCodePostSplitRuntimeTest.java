@@ -3,6 +3,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * This tests that a third-party library that is compiled with Protobuf-Java is able to
+ * run with Split-Protobuf
+ */
 // These tests cases test that existing client libraries in the Java SDK
 // compiled with Protobuf-Java are able to run with the new post-split runtimes
 class PreSplitCodePostSplitRuntimeTest {

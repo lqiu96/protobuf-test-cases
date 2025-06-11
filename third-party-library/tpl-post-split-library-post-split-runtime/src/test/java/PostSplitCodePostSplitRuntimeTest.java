@@ -19,6 +19,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+/**
+ * This tests that a third-party library that is compiled with Split-Protobuf is able to run
+ * with Post-Split Protobuf. The third-party library has modules Post-Split Protobuf shaded
+ * in the Java SDK.
+ */
 class PostSplitCodePostSplitRuntimeTest {
 
   private static File tempCertificateFile;

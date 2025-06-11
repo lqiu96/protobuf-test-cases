@@ -19,8 +19,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-// These tests cases test that shaded client libraries in the Java SDK
-// compiled with Split-Protobuf are able to run with post-split runtimes
+/**
+ * This tests that a third-party library that is compiled with Split-Protobuf is able to run
+ * with Protobuf-Java. The third-party library has modules Post-Split Protobuf shaded in the Java SDK.
+ */
 class PostSplitCodePreSplitRuntimeTest {
 
   private static File tempCertificateFile;

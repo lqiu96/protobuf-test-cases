@@ -1,6 +1,10 @@
 This repo is a multi-module maven project to test the impact of Protobuf-Java with the [split Protobuf repo](https://github.com/blakeli0/protobuf-poc-split-keep-package).
 
 # How to run
+Pre-Reqs (Read this section if there are any unexpected issues)
+- Java 17 (Install via https://sdkman.io/)
+- Maven (Can be installed via https://sdkman.io/)
+
 1. A `setup.sh` shell script can be run to pull in and download the required Maven artifacts.
 The script will do a few things
 - Pull java-shared-configs and install the artifacts
