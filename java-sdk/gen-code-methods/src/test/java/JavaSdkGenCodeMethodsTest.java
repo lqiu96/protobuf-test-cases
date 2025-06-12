@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.cloud.kms.v1.Certificate;
 import com.google.protobuf.ByteString;
@@ -17,6 +18,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+/**
+ * This tests the functionality of Protobuf-Sdk with some of Protobuf's more advanced
+ * functionality. It comes some basic use cases where users may parse messages from
+ * a stream/ bytes or build message from FieldDescriptors.
+ */
 class JavaSdkGenCodeMethodsTest {
 
   private static File tempCertificateFile;
@@ -112,6 +118,24 @@ class JavaSdkGenCodeMethodsTest {
   }
 
   @Test
+  void parser_fromByteString() throws InvalidProtocolBufferException {
+    Certificate certificate =
+            Certificate.newBuilder()
+                    .setIssuer("Issuer")
+                    .setParsed(false)
+                    .setSha256Fingerprint("SHA256")
+                    .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
+                    .build();
+
+    Certificate result = Certificate.parser().parseFrom(certificate.toByteString());
+    assertEquals(result.getIssuer(), certificate.getIssuer());
+    assertEquals(result.getParsed(), certificate.getParsed());
+    assertEquals(result.getSha256FingerprintBytes(), certificate.getSha256FingerprintBytes());
+    assertEquals(result.getNotAfterTime().getSeconds(), certificate.getNotAfterTime().getSeconds());
+    assertEquals(result.getNotAfterTime().getNanos(), certificate.getNotAfterTime().getNanos());
+  }
+
+  @Test
   void message_clear() {
     Certificate certificate =
         Certificate.newBuilder()
@@ -122,7 +146,7 @@ class JavaSdkGenCodeMethodsTest {
             .build();
     Certificate resetCertificate = certificate.toBuilder().clear().build();
     assertEquals("", resetCertificate.getIssuer());
-    assertEquals(false, resetCertificate.getParsed());
+    assertFalse(resetCertificate.getParsed());
     assertEquals("", resetCertificate.getSha256Fingerprint());
     assertEquals(0, resetCertificate.getNotAfterTime().getSeconds());
     assertEquals(0, resetCertificate.getNotAfterTime().getNanos());
@@ -147,7 +171,7 @@ class JavaSdkGenCodeMethodsTest {
 
     Certificate certificate = builder.build();
     assertEquals("myIssuer", certificate.getIssuer());
-    assertEquals(false, certificate.getParsed());
+    assertFalse(certificate.getParsed());
     assertEquals("SHA256", certificate.getSha256Fingerprint());
     assertEquals(1234, certificate.getNotAfterTime().getSeconds());
     assertEquals(5678, certificate.getNotAfterTime().getNanos());
