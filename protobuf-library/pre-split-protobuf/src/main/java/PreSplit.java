@@ -15,6 +15,7 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
+import com.google.protobuf.Parser;
 import com.google.protobuf.TextFormat;
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,7 +67,7 @@ public class PreSplit {
 
   // Use SecretManager API to run through the basic CRUD operations
   public static void secretManagerCRUD() {
-    String secretId = "lawrenceSecret";
+    String secretId = "mySecret";
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
       ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
@@ -106,28 +107,35 @@ public class PreSplit {
     return certificateBuilder.build();
   }
 
-  public static Certificate writeToFileReadFromFile(Certificate certificate) throws IOException {
-    File certificateFile = File.createTempFile("certificate", null);
-
-    try (FileOutputStream outputStream = new FileOutputStream(certificateFile)) {
-      certificate.writeTo(outputStream);
+  public static void writeToFile(Message message, File file) throws IOException {
+    try (FileOutputStream outputStream = new FileOutputStream(file)) {
+      message.writeTo(outputStream);
     }
-
-    Certificate newCertificate;
-    try (FileInputStream inputStream = new FileInputStream(certificateFile)) {
-      newCertificate = Certificate.parseFrom(inputStream);
-    }
-
-    certificateFile.delete();
-    return newCertificate;
   }
 
-  public static Certificate parserFromByteArray(Certificate certificate)
-      throws InvalidProtocolBufferException {
-    return Certificate.parser().parseFrom(certificate.toByteArray());
+  public static Message readFromFile(File file, Parser<? extends Message> parser)
+      throws IOException {
+    try (FileInputStream inputStream = new FileInputStream(file)) {
+      return parser.parseFrom(inputStream);
+    }
   }
 
-  public static Certificate messageClear(Certificate certificate) {
-    return certificate.toBuilder().clear().build();
+  public static Message writeToFileReadFromFile(Message message, Parser<? extends Message> parser)
+      throws IOException {
+    File messageFile = File.createTempFile("message", null);
+
+    writeToFile(message, messageFile);
+    Message newMessage = readFromFile(messageFile, parser);
+
+    messageFile.delete();
+    return newMessage;
+  }
+
+  public static Message parserFromByteArray(Message message) throws InvalidProtocolBufferException {
+    return message.getParserForType().parseFrom(message.toByteArray());
+  }
+
+  public static Message messageClear(Message message) {
+    return message.toBuilder().clear().build();
   }
 }

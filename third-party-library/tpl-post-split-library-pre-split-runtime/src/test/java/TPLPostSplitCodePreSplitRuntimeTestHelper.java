@@ -7,61 +7,17 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
  * This tests that a third-party library that is compiled with Split-Protobuf is able to run with
- * Post-Split Protobuf. The third-party library has modules Post-Split Protobuf shaded in the Java
- * SDK.
+ * Protobuf-Java. The third-party library has modules Post-Split Protobuf shaded in the Java SDK.
  */
-class TPLPostSplitCodePostSplitRuntimeTest {
-
-  private static File tempCertificateFile;
-  private static Path certificatePartialPath;
-
-  private static final String PARTIAL_ISSUER = "randomIssuer";
-  private static final boolean PARTIAL_PARSED = true;
-  private static final String PARTIAL_SHA256 = "randomSHA256";
-  private static final int PARTIAL_SECONDS = 1234;
-  private static final int PARTIAL_NANOS = 5678;
-
-  @BeforeAll
-  static void setup() throws IOException {
-    tempCertificateFile = File.createTempFile("certificate", null);
-    certificatePartialPath = Paths.get("src", "test", "resources", "certificate_partial.txt");
-
-    File certificatePartialFile = TPLPostSplitCodePostSplitRuntimeTest.certificatePartialPath.toFile();
-    // Create the directories if it doesn't already exist
-    certificatePartialFile.getParentFile().mkdirs();
-
-    Certificate certificate =
-        Certificate.newBuilder()
-            .setIssuer(PARTIAL_ISSUER)
-            .setParsed(PARTIAL_PARSED)
-            .setSha256FingerprintBytes(ByteString.copyFrom(PARTIAL_SHA256, StandardCharsets.UTF_8))
-            .setNotAfterTime(
-                Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
-            .build();
-
-    try (FileOutputStream outputStream = new FileOutputStream(certificatePartialFile)) {
-      certificate.writeTo(outputStream);
-    }
-  }
-
-  @AfterAll
-  static void cleanUp() {
-    tempCertificateFile.delete();
-  }
+class TPLPostSplitCodePreSplitRuntimeTestHelper extends BaseTestHelper {
 
   @Test
   void any() {
@@ -79,28 +35,43 @@ class TPLPostSplitCodePostSplitRuntimeTest {
     }
   }
 
+  @Override
   @Test
   void kms_list() {
     PostSplit.kmsList();
   }
 
+  @Override
   @Test
   void speech_recognize() {
     PostSplit.speechRecognize();
   }
 
+  @Override
   @Test
   void secret_manager_CRUD() {
     PostSplit.secretManagerCRUD();
   }
 
+  @Override
   @Test
   void notebook_operations() {
     PostSplit.notebooksOperations();
   }
 
+  @Override
   @Test
   void mergeFrom() throws IOException {
+    Certificate fileCertificate =
+        Certificate.newBuilder()
+            .setIssuer(PARTIAL_ISSUER)
+            .setParsed(PARTIAL_PARSED)
+            .setSha256FingerprintBytes(ByteString.copyFrom(PARTIAL_SHA256, StandardCharsets.UTF_8))
+            .setNotAfterTime(
+                Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
+            .build();
+    PostSplit.writeToFile(fileCertificate, certificatePartialPath.toFile());
+
     Certificate.Builder certificateBuilder = Certificate.newBuilder();
     certificateBuilder.mergeFrom(new FileInputStream(certificatePartialPath.toFile()));
 
@@ -112,6 +83,7 @@ class TPLPostSplitCodePostSplitRuntimeTest {
     assertEquals(PARTIAL_NANOS, certificate.getNotAfterTime().getNanos());
   }
 
+  @Override
   @Test
   void writeToFile_readFromFile() throws IOException {
     Certificate certificate =
@@ -122,14 +94,9 @@ class TPLPostSplitCodePostSplitRuntimeTest {
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
 
-    try (FileOutputStream outputStream = new FileOutputStream(tempCertificateFile)) {
-      certificate.writeTo(outputStream);
-    }
-
-    Certificate newCertificate;
-    try (FileInputStream inputStream = new FileInputStream(tempCertificateFile)) {
-      newCertificate = Certificate.parseFrom(inputStream);
-    }
+    Certificate newCertificate =
+        (Certificate)
+            PostSplit.writeToFileReadFromFile(certificate, certificate.getParserForType());
     assertEquals(certificate.getIssuer(), newCertificate.getIssuer());
     assertEquals(certificate.getParsed(), newCertificate.getParsed());
     assertEquals(
@@ -140,6 +107,7 @@ class TPLPostSplitCodePostSplitRuntimeTest {
         certificate.getNotAfterTime().getNanos(), newCertificate.getNotAfterTime().getNanos());
   }
 
+  @Override
   @Test
   void parser_fromByteArray() throws InvalidProtocolBufferException {
     Certificate certificate =
@@ -150,7 +118,7 @@ class TPLPostSplitCodePostSplitRuntimeTest {
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
 
-    Certificate result = Certificate.parser().parseFrom(certificate.toByteArray());
+    Certificate result = (Certificate) PostSplit.parserFromByteArray(certificate);
     assertEquals(result.getIssuer(), certificate.getIssuer());
     assertEquals(result.getParsed(), certificate.getParsed());
     assertEquals(result.getSha256FingerprintBytes(), certificate.getSha256FingerprintBytes());
@@ -158,6 +126,7 @@ class TPLPostSplitCodePostSplitRuntimeTest {
     assertEquals(result.getNotAfterTime().getNanos(), certificate.getNotAfterTime().getNanos());
   }
 
+  @Override
   @Test
   void message_clear() {
     Certificate certificate =
@@ -167,7 +136,7 @@ class TPLPostSplitCodePostSplitRuntimeTest {
             .setSha256Fingerprint("SHA256")
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
-    Certificate resetCertificate = certificate.toBuilder().clear().build();
+    Certificate resetCertificate = (Certificate) PostSplit.messageClear(certificate);
     assertEquals("", resetCertificate.getIssuer());
     assertEquals(false, resetCertificate.getParsed());
     assertEquals("", resetCertificate.getSha256Fingerprint());

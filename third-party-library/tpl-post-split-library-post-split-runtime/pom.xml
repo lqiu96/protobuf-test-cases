@@ -34,6 +34,13 @@
       <groupId>org.example</groupId>
       <artifactId>post-split-protobuf</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>tpl-util</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -48,7 +55,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <test>!TPLPostSplitCodePostSplitRuntimeTest#kms_list+secret_manager_CRUD+notebook_operations</test>
+              <test>!TPLPostSplitCodePostSplitRuntimeTestHelper#kms_list+secret_manager_CRUD+notebook_operations</test>
             </configuration>
           </plugin>
         </plugins>
