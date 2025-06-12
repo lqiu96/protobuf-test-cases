@@ -11,6 +11,8 @@ import com.google.cloud.kms.v1.ListKeyRingsRequest;
 import com.google.cloud.kms.v1.LocationName;
 import com.google.cloud.kms.v1.MacSignResponse;
 import com.google.cloud.kms.v1.ProtectionLevel;
+import com.google.cloud.notebooks.v2.Instance;
+import com.google.cloud.notebooks.v2.NotebookServiceClient;
 import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
@@ -26,54 +28,17 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.InvalidProtocolBufferException;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 
-public class CustomerProtosPostSplitRuntimeTest {
-
-  private static Path bookPartialPath;
-  private static File tempBookFile;
-
-  private static final int PARTIAL_ISBN = 9999;
-  private static final String PARTIAL_TITLE = "myNewTitle";
-  private static final String PARTIAL_AUTHOR = "myNewAuthor";
-
-  @BeforeAll
-  static void setup() throws IOException {
-    tempBookFile = File.createTempFile("certificate", null);
-    bookPartialPath = Paths.get("src", "test", "resources", "book_partial.txt");
-
-    File bookPartialFile = bookPartialPath.toFile();
-    // Create the directories if it doesn't already exist
-    bookPartialFile.getParentFile().mkdirs();
-
-    Book book =
-        Book.newBuilder()
-            .setIsbn(PARTIAL_ISBN)
-            .setTitle(PARTIAL_TITLE)
-            .setAuthorBytes(ByteString.copyFrom(PARTIAL_AUTHOR, StandardCharsets.UTF_8))
-            .build();
-
-    try (FileOutputStream outputStream = new FileOutputStream(bookPartialFile)) {
-      book.writeTo(outputStream);
-    }
-  }
-
-  @AfterAll
-  static void cleanUp() {
-    tempBookFile.delete();
-  }
+public class CustomerProtosPostSplitRuntimeTest extends BaseAdvancedTestCases
+    implements BaseJavaSdkTestCases {
 
   @Test
   void java_sdk_message() {
@@ -126,9 +91,9 @@ public class CustomerProtosPostSplitRuntimeTest {
     assertInstanceOf(com.google.protobuf.Message.class, response);
   }
 
-  @Timeout(value = 5)
+  @Override
   @Test
-  void kms_list() {
+  public void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
         KeyManagementServiceClient.create()) {
       KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
@@ -147,9 +112,9 @@ public class CustomerProtosPostSplitRuntimeTest {
   }
 
   // Speech has custom RPCs (recognize)
-  @Timeout(value = 5)
+  @Override
   @Test
-  void speech_recognize() {
+  public void speech_recognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
       RecognitionConfig config =
@@ -172,9 +137,9 @@ public class CustomerProtosPostSplitRuntimeTest {
   }
 
   // Use SecretManager API to run through the basic CRUD operations
-  @Timeout(value = 5)
+  @Override
   @Test
-  void secret_manager_CRUD() {
+  public void secret_manager_CRUD() {
     String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
@@ -209,10 +174,41 @@ public class CustomerProtosPostSplitRuntimeTest {
     }
   }
 
+  @Override
+  public void notebook_operations() {
+    String id = UUID.randomUUID().toString().substring(0, 6);
+    try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {
+      Instance instance =
+          notebookServiceClient
+              .createInstanceAsync(
+                  com.google.cloud.notebooks.v2.LocationName.of(
+                          System.getenv("PROJECT_ID"), System.getenv("ZONE"))
+                      .toString(),
+                  Instance.newBuilder().build(),
+                  String.format("instance%s", id))
+              .get();
+      notebookServiceClient.deleteInstanceAsync(instance.getName()).get();
+    } catch (IOException | ExecutionException | InterruptedException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
   @Test
   void mergeFrom() throws IOException {
+    Book fileBook =
+        Book.newBuilder()
+            .setIsbn(PARTIAL_ISBN)
+            .setTitle(PARTIAL_TITLE)
+            .setAuthorBytes(ByteString.copyFrom(PARTIAL_AUTHOR, StandardCharsets.UTF_8))
+            .build();
+
+    try (FileOutputStream outputStream = new FileOutputStream(partialPath.toFile())) {
+      fileBook.writeTo(outputStream);
+    }
+
     Book.Builder bookBuilder = Book.newBuilder();
-    bookBuilder.mergeFrom(new FileInputStream(bookPartialPath.toFile()));
+    bookBuilder.mergeFrom(new FileInputStream(partialPath.toFile()));
 
     Book book = bookBuilder.build();
     assertEquals(PARTIAL_ISBN, book.getIsbn());
@@ -220,6 +216,7 @@ public class CustomerProtosPostSplitRuntimeTest {
     assertEquals(PARTIAL_AUTHOR, book.getAuthor());
   }
 
+  @Override
   @Test
   void writeToFile_readFromFile() throws IOException {
     Book book =
@@ -229,12 +226,12 @@ public class CustomerProtosPostSplitRuntimeTest {
             .setAuthorBytes(ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8))
             .build();
 
-    try (FileOutputStream outputStream = new FileOutputStream(tempBookFile)) {
+    try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
       book.writeTo(outputStream);
     }
 
     Book newBook;
-    try (FileInputStream inputStream = new FileInputStream(tempBookFile)) {
+    try (FileInputStream inputStream = new FileInputStream(tempFile)) {
       newBook = Book.parseFrom(inputStream);
     }
     assertEquals(newBook.getIsbn(), book.getIsbn());
@@ -242,6 +239,7 @@ public class CustomerProtosPostSplitRuntimeTest {
     assertEquals(newBook.getAuthor(), book.getAuthor());
   }
 
+  @Override
   @Test
   void parser_fromByteArray() throws InvalidProtocolBufferException {
     Book book =
@@ -257,6 +255,7 @@ public class CustomerProtosPostSplitRuntimeTest {
     assertEquals(result.getAuthor(), book.getAuthor());
   }
 
+  @Override
   @Test
   void message_clear() {
     Book book =

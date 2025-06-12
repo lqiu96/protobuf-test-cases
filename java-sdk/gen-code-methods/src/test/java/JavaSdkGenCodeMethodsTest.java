@@ -6,40 +6,22 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * This tests the functionality of Protobuf-Sdk with some of Protobuf's more advanced
- * functionality. It comes some basic use cases where users may parse messages from
- * a stream/ bytes or build message from FieldDescriptors.
+ * This tests the functionality of Protobuf-Sdk with some of Protobuf's more advanced functionality.
+ * It comes some basic use cases where users may parse messages from a stream/ bytes or build
+ * message from FieldDescriptors.
  */
-class JavaSdkGenCodeMethodsTest {
+class JavaSdkGenCodeMethodsTest extends BaseAdvancedTestCases {
 
-  private static File tempCertificateFile;
-  private static Path certificatePartialPath;
-
-  private static final String PARTIAL_ISSUER = "randomIssuer";
-  private static final boolean PARTIAL_PARSED = true;
-  private static final String PARTIAL_SHA256 = "randomSHA256";
-  private static final int PARTIAL_SECONDS = 1234;
-  private static final int PARTIAL_NANOS = 5678;
-
-  @BeforeAll
-  static void setup() throws IOException {
-    tempCertificateFile = File.createTempFile("certificate", null);
-    certificatePartialPath = Paths.get("src", "test", "resources", "certificate_partial.txt");
-
-    Certificate certificate =
+  @Test
+  void mergeFrom() throws IOException {
+    Certificate fileCertificate =
         Certificate.newBuilder()
             .setIssuer(PARTIAL_ISSUER)
             .setParsed(PARTIAL_PARSED)
@@ -47,21 +29,12 @@ class JavaSdkGenCodeMethodsTest {
             .setNotAfterTime(
                 Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
             .build();
-
-    try (FileOutputStream outputStream = new FileOutputStream(certificatePartialPath.toFile())) {
-      certificate.writeTo(outputStream);
+    try (FileOutputStream outputStream = new FileOutputStream(partialPath.toFile())) {
+      fileCertificate.writeTo(outputStream);
     }
-  }
 
-  @AfterAll
-  static void cleanUp() {
-    tempCertificateFile.delete();
-  }
-
-  @Test
-  void mergeFrom() throws IOException {
     Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(certificatePartialPath.toFile()));
+    certificateBuilder.mergeFrom(new FileInputStream(partialPath.toFile()));
 
     Certificate certificate = certificateBuilder.build();
     assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
@@ -81,12 +54,12 @@ class JavaSdkGenCodeMethodsTest {
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
 
-    try (FileOutputStream outputStream = new FileOutputStream(tempCertificateFile)) {
+    try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
       certificate.writeTo(outputStream);
     }
 
     Certificate newCertificate;
-    try (FileInputStream inputStream = new FileInputStream(tempCertificateFile)) {
+    try (FileInputStream inputStream = new FileInputStream(tempFile)) {
       newCertificate = Certificate.parseFrom(inputStream);
     }
     assertEquals(certificate.getIssuer(), newCertificate.getIssuer());
@@ -120,12 +93,12 @@ class JavaSdkGenCodeMethodsTest {
   @Test
   void parser_fromByteString() throws InvalidProtocolBufferException {
     Certificate certificate =
-            Certificate.newBuilder()
-                    .setIssuer("Issuer")
-                    .setParsed(false)
-                    .setSha256Fingerprint("SHA256")
-                    .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
-                    .build();
+        Certificate.newBuilder()
+            .setIssuer("Issuer")
+            .setParsed(false)
+            .setSha256Fingerprint("SHA256")
+            .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
+            .build();
 
     Certificate result = Certificate.parser().parseFrom(certificate.toByteString());
     assertEquals(result.getIssuer(), certificate.getIssuer());
@@ -163,7 +136,8 @@ class JavaSdkGenCodeMethodsTest {
     Descriptors.FieldDescriptor parsed = descriptor.findFieldByName("parsed");
     builder.setField(parsed, false);
 
-    Descriptors.FieldDescriptor sha256Fingerprint = descriptor.findFieldByName("sha256_fingerprint");
+    Descriptors.FieldDescriptor sha256Fingerprint =
+        descriptor.findFieldByName("sha256_fingerprint");
     builder.setField(sha256Fingerprint, ByteString.copyFrom("SHA256", StandardCharsets.UTF_8));
 
     Descriptors.FieldDescriptor notAfterTime = descriptor.findFieldByName("not_after_time");

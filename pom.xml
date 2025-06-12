@@ -22,6 +22,7 @@
     <module>customer-protos</module>
     <module>java-sdk</module>
     <module>shading</module>
+    <module>proto-test-case-helper</module>
   </modules>
 
 </project>

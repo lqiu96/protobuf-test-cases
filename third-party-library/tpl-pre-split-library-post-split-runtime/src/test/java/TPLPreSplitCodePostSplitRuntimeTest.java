@@ -1,65 +1,74 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.cloud.kms.v1.Certificate;
-import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
- * This tests that a third-party library that is compiled with Split-Protobuf is able to run with
- * Post-Split Protobuf. The third-party library has modules Post-Split Protobuf shaded in the Java
- * SDK.
+ * This tests that a third-party library that is compiled with Protobuf-Java is able to run with
+ * Split-Protobuf
  */
-class TPLPostSplitCodePostSplitRuntimeTestHelper extends BaseTestHelper {
+// These tests cases test that existing client libraries in the Java SDK
+// compiled with Protobuf-Java are able to run with the new post-split runtimes
+@Disabled
+class TPLPreSplitCodePostSplitRuntimeTest extends BaseAdvancedTestCases
+    implements BaseJavaSdkTestCases {
 
   @Test
-  void any() {
-    Any any = PostSplit.any();
-    assertEquals("", any.getValue().toString(StandardCharsets.UTF_8));
+  void textFormat_protobufSdk() {
+    assertEquals("value: \"Value\"\n", PreSplit.textFormat());
   }
 
+  // This expected to throw a Verify Error (binary breaking change) because the hierarchy
+  // of messages was updated and is no longer the same:
+  // Pre-Split: GeneratedMessageV3 -> AbstractMessage -> Message
+  // Post-Split: GeneratedMessageV3 -> SingleFieldBuilder -> Message
+  // This requires the messages to be rebuilt
   @Test
-  void message_instanceOf_shadedProtobuf() {
-    List<Message> messages = PostSplit.messages();
-    for (Message message : messages) {
-      assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV3.class, message);
-      assertInstanceOf(com.shaded.google.protobuf.proto.AbstractMessage.class, message);
-      assertInstanceOf(Message.class, message);
-    }
+  void messages_instanceOf_protobufApi_throwsVerifyError() {
+    assertThrows(VerifyError.class, PreSplit::messages);
   }
 
+  // TODO: Currently disabled as PreSplit doesn't have an implementation
+  @Override
+  @Disabled
+  @Test
+  public void kms_list() {}
+
+  // This expected to throw a Verify Error (binary breaking change) because the hierarchy
+  // of messages was updated and is no longer the same:
+  // Pre-Split: GeneratedMessageV3 -> AbstractMessage -> Message
+  // Post-Split: GeneratedMessageV3 -> SingleFieldBuilder -> Message
+  // This requires the messages to be rebuilt
   @Override
   @Test
-  void kms_list() {
-    PostSplit.kmsList();
+  public void speech_recognize() {
+    assertThrows(VerifyError.class, PreSplit::speechRecognize);
   }
 
+  // This expected to throw a Verify Error (binary breaking change) because the hierarchy
+  // of messages was updated and is no longer the same:
+  // Pre-Split: GeneratedMessageV3 -> AbstractMessage -> Message
+  // Post-Split: GeneratedMessageV3 -> SingleFieldBuilder -> Message
+  // This requires the messages to be rebuilt
   @Override
   @Test
-  void speech_recognize() {
-    PostSplit.speechRecognize();
+  public void secret_manager_CRUD() {
+    assertThrows(VerifyError.class, PreSplit::secretManagerCRUD);
   }
 
+  // TODO: Currently disabled as PreSplit doesn't have an implementation
   @Override
+  @Disabled
   @Test
-  void secret_manager_CRUD() {
-    PostSplit.secretManagerCRUD();
-  }
-
-  @Override
-  @Test
-  void notebook_operations() {
-    PostSplit.notebooksOperations();
-  }
+  public void notebook_operations() {}
 
   @Override
   @Test
@@ -72,10 +81,10 @@ class TPLPostSplitCodePostSplitRuntimeTestHelper extends BaseTestHelper {
             .setNotAfterTime(
                 Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
             .build();
-    PostSplit.writeToFile(fileCertificate, certificatePartialPath.toFile());
+    PreSplit.writeToFile(fileCertificate, partialPath.toFile());
 
     Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(certificatePartialPath.toFile()));
+    certificateBuilder.mergeFrom(new FileInputStream(partialPath.toFile()));
 
     Certificate certificate = certificateBuilder.build();
     assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
@@ -97,8 +106,7 @@ class TPLPostSplitCodePostSplitRuntimeTestHelper extends BaseTestHelper {
             .build();
 
     Certificate newCertificate =
-        (Certificate)
-            PostSplit.writeToFileReadFromFile(certificate, certificate.getParserForType());
+        (Certificate) PreSplit.writeToFileReadFromFile(certificate, certificate.getParserForType());
     assertEquals(certificate.getIssuer(), newCertificate.getIssuer());
     assertEquals(certificate.getParsed(), newCertificate.getParsed());
     assertEquals(
@@ -120,7 +128,7 @@ class TPLPostSplitCodePostSplitRuntimeTestHelper extends BaseTestHelper {
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
 
-    Certificate result = (Certificate) PostSplit.parserFromByteArray(certificate);
+    Certificate result = (Certificate) PreSplit.parserFromByteArray(certificate);
     assertEquals(result.getIssuer(), certificate.getIssuer());
     assertEquals(result.getParsed(), certificate.getParsed());
     assertEquals(result.getSha256FingerprintBytes(), certificate.getSha256FingerprintBytes());
@@ -138,9 +146,9 @@ class TPLPostSplitCodePostSplitRuntimeTestHelper extends BaseTestHelper {
             .setSha256Fingerprint("SHA256")
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
-    Certificate resetCertificate = (Certificate) PostSplit.messageClear(certificate);
+    Certificate resetCertificate = (Certificate) PreSplit.messageClear(certificate);
     assertEquals("", resetCertificate.getIssuer());
-    assertFalse(resetCertificate.getParsed());
+    assertEquals(false, resetCertificate.getParsed());
     assertEquals("", resetCertificate.getSha256Fingerprint());
     assertEquals(0, resetCertificate.getNotAfterTime().getSeconds());
     assertEquals(0, resetCertificate.getNotAfterTime().getNanos());

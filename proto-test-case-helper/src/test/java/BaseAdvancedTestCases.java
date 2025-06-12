@@ -7,50 +7,40 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Base abstract class for the Third Party Dependency test cases.
+ * This abstract class is the base class for testing more advanced protobuf functionality.
+ * This covers setting up any required files to read/write for parsing as well as merging.
  */
-public abstract class BaseTestHelper {
+public abstract class BaseAdvancedTestCases {
 
-  protected static File tempCertificateFile;
-  protected static Path certificatePartialPath;
+  protected static File tempFile;
+  protected static Path partialPath;
 
+  // Certificate constants
   protected static final String PARTIAL_ISSUER = "randomIssuer";
   protected static final boolean PARTIAL_PARSED = true;
   protected static final String PARTIAL_SHA256 = "randomSHA256";
   protected static final int PARTIAL_SECONDS = 1234;
   protected static final int PARTIAL_NANOS = 5678;
 
+  // Book constants
+  protected static final int PARTIAL_ISBN = 9999;
+  protected static final String PARTIAL_TITLE = "myNewTitle";
+  protected static final String PARTIAL_AUTHOR = "myNewAuthor";
+
   @BeforeAll
   static void setup() throws IOException {
-    tempCertificateFile = File.createTempFile("certificate", null);
-    certificatePartialPath = Paths.get("src", "test", "resources", "certificate_partial.txt");
+    tempFile = File.createTempFile("temp", null);
+    partialPath = Paths.get("src", "test", "resources", "partial.txt");
 
-    File certificatePartialFile = certificatePartialPath.toFile();
+    File partialPathFile = partialPath.toFile();
     // Create the directories if it doesn't already exist
-    certificatePartialFile.getParentFile().mkdirs();
+    partialPathFile.getParentFile().mkdirs();
   }
 
   @AfterAll
   static void cleanUp() {
-    tempCertificateFile.delete();
+    tempFile.delete();
   }
-
-  /**
-   * The following methods are added as abstract methods to ensure that all
-   * module test cases scenarios (compiled with version X and run with version Y).
-   */
-
-  @Test
-  abstract void kms_list();
-
-  @Test
-  abstract void speech_recognize();
-
-  @Test
-  abstract void secret_manager_CRUD();
-
-  @Test
-  abstract void notebook_operations();
 
   @Test
   abstract void mergeFrom() throws IOException;

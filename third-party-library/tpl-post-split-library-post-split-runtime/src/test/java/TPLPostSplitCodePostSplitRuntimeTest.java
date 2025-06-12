@@ -1,4 +1,5 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.cloud.kms.v1.Certificate;
@@ -8,6 +9,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -15,9 +17,11 @@ import org.junit.jupiter.api.Test;
 
 /**
  * This tests that a third-party library that is compiled with Split-Protobuf is able to run with
- * Protobuf-Java. The third-party library has modules Post-Split Protobuf shaded in the Java SDK.
+ * Post-Split Protobuf. The third-party library has modules Post-Split Protobuf shaded in the Java
+ * SDK.
  */
-class TPLPostSplitCodePreSplitRuntimeTestHelper extends BaseTestHelper {
+class TPLPostSplitCodePostSplitRuntimeTest extends BaseAdvancedTestCases
+    implements BaseJavaSdkTestCases {
 
   @Test
   void any() {
@@ -37,25 +41,25 @@ class TPLPostSplitCodePreSplitRuntimeTestHelper extends BaseTestHelper {
 
   @Override
   @Test
-  void kms_list() {
+  public void kms_list() {
     PostSplit.kmsList();
   }
 
   @Override
   @Test
-  void speech_recognize() {
+  public void speech_recognize() {
     PostSplit.speechRecognize();
   }
 
   @Override
   @Test
-  void secret_manager_CRUD() {
+  public void secret_manager_CRUD() {
     PostSplit.secretManagerCRUD();
   }
 
   @Override
   @Test
-  void notebook_operations() {
+  public void notebook_operations() {
     PostSplit.notebooksOperations();
   }
 
@@ -70,10 +74,11 @@ class TPLPostSplitCodePreSplitRuntimeTestHelper extends BaseTestHelper {
             .setNotAfterTime(
                 Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
             .build();
-    PostSplit.writeToFile(fileCertificate, certificatePartialPath.toFile());
-
+    try (FileOutputStream outputStream = new FileOutputStream(partialPath.toFile())) {
+      fileCertificate.writeTo(outputStream);
+    }
     Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(certificatePartialPath.toFile()));
+    certificateBuilder.mergeFrom(new FileInputStream(partialPath.toFile()));
 
     Certificate certificate = certificateBuilder.build();
     assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
@@ -138,7 +143,7 @@ class TPLPostSplitCodePreSplitRuntimeTestHelper extends BaseTestHelper {
             .build();
     Certificate resetCertificate = (Certificate) PostSplit.messageClear(certificate);
     assertEquals("", resetCertificate.getIssuer());
-    assertEquals(false, resetCertificate.getParsed());
+    assertFalse(resetCertificate.getParsed());
     assertEquals("", resetCertificate.getSha256Fingerprint());
     assertEquals(0, resetCertificate.getNotAfterTime().getSeconds());
     assertEquals(0, resetCertificate.getNotAfterTime().getNanos());
