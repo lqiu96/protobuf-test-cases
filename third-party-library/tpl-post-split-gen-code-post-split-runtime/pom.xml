@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>tpl-pre-split-gen-code</artifactId>
+  <artifactId>tpl-post-split-gen-code-post-split-runtime</artifactId>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
@@ -27,13 +27,9 @@
     <!-- Third Party Library with Gen Code + Pre-Split Protobuf-Java Runtime -->
     <dependency>
       <groupId>org.example</groupId>
-      <artifactId>pre-split-gen-code</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>google-cloud-kms</artifactId>
-<!--      <version>protobuf-shading-within-module</version>-->
-      <version>2.65.0</version>
+      <artifactId>post-split-gen-code</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
+
 </project>

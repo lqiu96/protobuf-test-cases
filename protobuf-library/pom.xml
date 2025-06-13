@@ -26,6 +26,7 @@
     <module>post-split-protobuf</module>
     <module>pre-split-gen-code</module>
     <module>pre-split-protobuf</module>
+    <module>post-split-gen-code</module>
   </modules>
 
   <dependencyManagement>

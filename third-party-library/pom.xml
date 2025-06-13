@@ -14,9 +14,10 @@
   <packaging>pom</packaging>
   <modules>
     <module>tpl-post-split-library-post-split-runtime</module>
-    <module>tpl-pre-split-gen-code</module>
+    <module>tpl-pre-split-gen-code-post-split-runtime</module>
     <module>tpl-pre-split-library-post-split-runtime</module>
     <module>tpl-post-split-library-pre-split-runtime</module>
+    <module>tpl-post-split-gen-code-post-split-runtime</module>
   </modules>
 
   <dependencyManagement>
