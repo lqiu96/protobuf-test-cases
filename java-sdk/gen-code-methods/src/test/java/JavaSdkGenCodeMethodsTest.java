@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
  * It comes some basic use cases where users may parse messages from a stream/ bytes or build
  * message from FieldDescriptors.
  */
-class JavaSdkGenCodeMethodsTest extends BaseAdvancedTestCases {
+class JavaSdkGenCodeMethodsTest extends BaseAdvancedUseCaseTestCases {
 
   @Test
   void mergeFrom() throws IOException {

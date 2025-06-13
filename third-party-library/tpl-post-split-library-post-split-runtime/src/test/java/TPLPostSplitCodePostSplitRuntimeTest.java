@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import com.google.cloud.kms.v1.Certificate;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
@@ -20,7 +21,7 @@ import org.junit.jupiter.api.Test;
  * Post-Split Protobuf. The third-party library has modules Post-Split Protobuf shaded in the Java
  * SDK.
  */
-class TPLPostSplitCodePostSplitRuntimeTest extends BaseAdvancedTestCases
+class TPLPostSplitCodePostSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
 
   @Test
@@ -131,6 +132,24 @@ class TPLPostSplitCodePostSplitRuntimeTest extends BaseAdvancedTestCases
     assertEquals(result.getNotAfterTime().getNanos(), certificate.getNotAfterTime().getNanos());
   }
 
+  @Test
+  void parser_fromByteString() throws InvalidProtocolBufferException {
+    Certificate certificate =
+        Certificate.newBuilder()
+            .setIssuer("Issuer")
+            .setParsed(false)
+            .setSha256Fingerprint("SHA256")
+            .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
+            .build();
+
+    Certificate result = Certificate.parser().parseFrom(certificate.toByteString());
+    assertEquals(result.getIssuer(), certificate.getIssuer());
+    assertEquals(result.getParsed(), certificate.getParsed());
+    assertEquals(result.getSha256FingerprintBytes(), certificate.getSha256FingerprintBytes());
+    assertEquals(result.getNotAfterTime().getSeconds(), certificate.getNotAfterTime().getSeconds());
+    assertEquals(result.getNotAfterTime().getNanos(), certificate.getNotAfterTime().getNanos());
+  }
+
   @Override
   @Test
   void message_clear() {
@@ -147,5 +166,31 @@ class TPLPostSplitCodePostSplitRuntimeTest extends BaseAdvancedTestCases
     assertEquals("", resetCertificate.getSha256Fingerprint());
     assertEquals(0, resetCertificate.getNotAfterTime().getSeconds());
     assertEquals(0, resetCertificate.getNotAfterTime().getNanos());
+  }
+
+  @Test
+  void fieldDescriptors_get_set() {
+    Certificate.Builder builder = Certificate.newBuilder();
+    Descriptors.Descriptor descriptor = builder.getDescriptorForType();
+
+    Descriptors.FieldDescriptor issuer = descriptor.findFieldByName("issuer");
+    builder.setField(issuer, "myIssuer");
+
+    Descriptors.FieldDescriptor parsed = descriptor.findFieldByName("parsed");
+    builder.setField(parsed, false);
+
+    Descriptors.FieldDescriptor sha256Fingerprint =
+        descriptor.findFieldByName("sha256_fingerprint");
+    builder.setField(sha256Fingerprint, ByteString.copyFrom("SHA256", StandardCharsets.UTF_8));
+
+    Descriptors.FieldDescriptor notAfterTime = descriptor.findFieldByName("not_after_time");
+    builder.setField(notAfterTime, Timestamp.newBuilder().setSeconds(1234).setNanos(5678).build());
+
+    Certificate certificate = builder.build();
+    assertEquals("myIssuer", certificate.getIssuer());
+    assertFalse(certificate.getParsed());
+    assertEquals("SHA256", certificate.getSha256Fingerprint());
+    assertEquals(1234, certificate.getNotAfterTime().getSeconds());
+    assertEquals(5678, certificate.getNotAfterTime().getNanos());
   }
 }

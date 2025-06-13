@@ -25,6 +25,7 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.Descriptors;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -37,7 +38,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 
-public class CustomerProtosPostSplitRuntimeTest extends BaseAdvancedTestCases
+public class CustomerProtosPostSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
 
   @Test
@@ -239,6 +240,16 @@ public class CustomerProtosPostSplitRuntimeTest extends BaseAdvancedTestCases
     assertEquals(newBook.getAuthor(), book.getAuthor());
   }
 
+  @Test
+  void parser_fromByteString() throws InvalidProtocolBufferException {
+    Book book = Book.newBuilder().setIsbn(1234).setAuthor("myAuthor").setTitle("myTitle").build();
+
+    Book result = Book.parser().parseFrom(book.toByteString());
+    assertEquals(result.getIsbn(), book.getIsbn());
+    assertEquals(result.getAuthor(), book.getAuthor());
+    assertEquals(result.getTitle(), book.getTitle());
+  }
+
   @Override
   @Test
   void parser_fromByteArray() throws InvalidProtocolBufferException {
@@ -267,5 +278,26 @@ public class CustomerProtosPostSplitRuntimeTest extends BaseAdvancedTestCases
     Book resetBook = book.toBuilder().clear().build();
     assertEquals(0, resetBook.getIsbn());
     assertEquals("", resetBook.getTitle());
+  }
+
+  @Override
+  @Test
+  void fieldDescriptors_get_set() {
+    Book.Builder builder = Book.newBuilder();
+    Descriptors.Descriptor descriptor = builder.getDescriptorForType();
+
+    Descriptors.FieldDescriptor isbn = descriptor.findFieldByName("isbn");
+    builder.setField(isbn, 1234);
+
+    Descriptors.FieldDescriptor title = descriptor.findFieldByName("title");
+    builder.setField(title, "myTitle");
+
+    Descriptors.FieldDescriptor author = descriptor.findFieldByName("author");
+    builder.setField(author, ByteString.copyFrom("myAuthor", StandardCharsets.UTF_8));
+
+    Book book = builder.build();
+    assertEquals(1234, book.getIsbn());
+    assertEquals("myTitle", book.getTitle());
+    assertEquals("myAuthor", book.getAuthor());
   }
 }

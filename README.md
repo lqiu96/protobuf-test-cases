@@ -15,8 +15,8 @@ have protobuf-api as their dependencies
 - Pull google-cloud-java and install a few select handwritten libraries with protobuf shaded. The modules that are shaded 
 are kms, speech, and secretmanager as they cover a breadth of common requests in the java-sdk
 
-Note: If you do not wish to setup a Google Cloud project, you can skip the following steps and run `mvn test`. This will
-only run a subset of tests. If you want to run all the tests, continue with the following steps.
+Note: If you do not wish to setup a Google Cloud project, you can skip the following steps and run `mvn clean install`.
+This will only run a subset of tests. If you want to run all the tests, continue with the following steps.
 
 2. After running the setup script, set the env vars listed in [here](#env-vars)
 
@@ -28,7 +28,7 @@ only run a subset of tests. If you want to run all the tests, continue with the 
 
 These APIs can be enabled via: https://cloud.google.com/service-usage/docs/enable-disable
 
-4. Once all the above is configured, run `mvn test -Pall` to run through all the test cases.
+4. Once all the above is configured, run `mvn clean install -Pall` to run through all the test cases.
 
 # Modules
 The following modules are configured to test a matrix of potential customer environments.
