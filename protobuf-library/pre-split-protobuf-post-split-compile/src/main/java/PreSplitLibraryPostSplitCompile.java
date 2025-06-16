@@ -1,4 +1,3 @@
-import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
 import com.google.cloud.kms.v1.KeyRing;
 import com.google.cloud.kms.v1.ListKeyRingsRequest;
@@ -27,19 +26,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class PreSplitLibraryPostSplitCompile {
-  // TextFormat is now in Protobuf-Sdk in the post-split repo
-  public static String textFormat() {
-    return TextFormat.printer()
-        .printToString(
-            Any.newBuilder().setValue(ByteString.copyFrom("Value", StandardCharsets.UTF_8)));
-  }
 
   public static List<Message> messages() {
     return List.of(

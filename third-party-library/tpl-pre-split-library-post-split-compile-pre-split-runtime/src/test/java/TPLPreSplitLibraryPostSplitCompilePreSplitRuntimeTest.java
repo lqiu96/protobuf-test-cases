@@ -6,7 +6,6 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -14,22 +13,6 @@ import org.junit.jupiter.api.Test;
 
 class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
-
-  //  @Test
-  //  void any() {
-  //    Any any = PreSplitLibraryPostSplitCompile.any();
-  //    assertEquals("", any.getValue().toString(StandardCharsets.UTF_8));
-  //  }
-
-  //  @Test
-  //  void message_instanceOf_shadedProtobuf() {
-  //    List<Message> messages = PreSplitLibraryPostSplitCompile.messages();
-  //    for (Message message : messages) {
-  //      assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV3.class, message);
-  //      assertInstanceOf(com.shaded.google.protobuf.proto.AbstractMessage.class, message);
-  //      assertInstanceOf(Message.class, message);
-  //    }
-  //  }
 
   @Override
   @Test
@@ -69,7 +52,9 @@ class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvanced
     try (FileOutputStream outputStream = new FileOutputStream(partialPath.toFile())) {
       fileCertificate.writeTo(outputStream);
     }
-    Certificate certificate = (Certificate) PreSplitLibraryPostSplitCompile.mergeFrom(Certificate.newBuilder(), partialPath);
+    Certificate certificate =
+        (Certificate)
+            PreSplitLibraryPostSplitCompile.mergeFrom(Certificate.newBuilder(), partialPath);
     assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
     assertEquals(PARTIAL_PARSED, certificate.getParsed());
     assertEquals(PARTIAL_SHA256, certificate.getSha256Fingerprint());
