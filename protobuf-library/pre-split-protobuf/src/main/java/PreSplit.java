@@ -1,4 +1,3 @@
-import com.google.cloud.kms.v1.Certificate;
 import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
@@ -100,11 +99,10 @@ public class PreSplit {
     }
   }
 
-  public static Certificate mergeFrom(Path path) throws IOException {
-    Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(path.toFile()));
+  public static Message mergeFrom(Message.Builder builder, Path path) throws IOException {
+    builder.mergeFrom(new FileInputStream(path.toFile()));
 
-    return certificateBuilder.build();
+    return builder.build();
   }
 
   public static void writeToFile(Message message, File file) throws IOException {

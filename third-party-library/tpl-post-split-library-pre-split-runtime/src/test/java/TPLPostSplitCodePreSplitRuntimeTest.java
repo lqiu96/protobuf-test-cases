@@ -9,7 +9,6 @@ import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -74,11 +73,9 @@ class TPLPostSplitCodePreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
                 Timestamp.newBuilder().setSeconds(PARTIAL_SECONDS).setNanos(PARTIAL_NANOS).build())
             .build();
     PostSplit.writeToFile(fileCertificate, partialPath.toFile());
+    Certificate certificate =
+        (Certificate) PostSplit.mergeFrom(Certificate.newBuilder(), partialPath);
 
-    Certificate.Builder certificateBuilder = Certificate.newBuilder();
-    certificateBuilder.mergeFrom(new FileInputStream(partialPath.toFile()));
-
-    Certificate certificate = certificateBuilder.build();
     assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
     assertEquals(PARTIAL_PARSED, certificate.getParsed());
     assertEquals(PARTIAL_SHA256, certificate.getSha256Fingerprint());

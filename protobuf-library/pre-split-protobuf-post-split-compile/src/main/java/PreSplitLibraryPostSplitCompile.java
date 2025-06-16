@@ -15,13 +15,10 @@ import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
-import com.google.protobuf.Any;
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Duration;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
-import com.google.protobuf.TextFormat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,14 +29,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 public class PreSplitLibraryPostSplitCompile {
-
-  public static List<Message> messages() {
-    return List.of(
-        SpeechRecognitionResult.newBuilder().build(),
-        Secret.newBuilder().build(),
-        RecognitionConfig.newBuilder().build(),
-        Replication.newBuilder().build());
-  }
 
   public static void kmsList() {
     try (KeyManagementServiceClient keyManagementServiceClient =
