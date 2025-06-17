@@ -17,6 +17,7 @@
     <module>non-gen-code-methods</module>
     <module>gen-code-methods</module>
     <module>request-response</module>
+    <module>httpjson-request-response</module>
   </modules>
 
   <properties>

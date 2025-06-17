@@ -1,17 +1,14 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.cloud.kms.v1.KeyManagementServiceClient;
-import com.google.cloud.kms.v1.KeyManagementServiceSettings;
 import com.google.cloud.kms.v1.ListKeyRingsRequest;
 import com.google.cloud.kms.v1.LocationName;
 import com.google.cloud.notebooks.v2.Instance;
 import com.google.cloud.notebooks.v2.NotebookServiceClient;
-import com.google.cloud.notebooks.v2.NotebookServiceSettings;
 import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
-import com.google.cloud.secretmanager.v1.SecretManagerServiceSettings;
 import com.google.cloud.secretmanager.v1.UpdateSecretRequest;
 import com.google.cloud.speech.v1.RecognitionAudio;
 import com.google.cloud.speech.v1.RecognitionConfig;
@@ -19,7 +16,6 @@ import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
-import com.google.cloud.speech.v1.SpeechSettings;
 import com.google.protobuf.Duration;
 import com.google.protobuf.FieldMask;
 import java.io.IOException;
@@ -27,18 +23,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
-/**
- * These test cases test that the Java-Sdk can make calls to Google Cloud and parse the response.
- * This is the base case with using the new Post-Split Protobuf. These client library versions are
- * both compiled and run with post-split protobuf.
- */
-class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
+class HttpJsonJavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   @Override
   public void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
-        KeyManagementServiceClient.create(
-            KeyManagementServiceSettings.newHttpJsonBuilder().build())) {
+        KeyManagementServiceClient.create()) {
       keyManagementServiceClient.listKeyRings(
           ListKeyRingsRequest.newBuilder()
               .setParent(
@@ -53,8 +43,7 @@ class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
   // Speech has custom RPCs (recognize)
   @Override
   public void speech_recognize() {
-    try (SpeechClient speechClient =
-        SpeechClient.create(SpeechSettings.newHttpJsonBuilder().build())) {
+    try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
       RecognitionConfig config =
           RecognitionConfig.newBuilder()
@@ -80,8 +69,7 @@ class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
   public void secret_manager_CRUD() {
     String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
-        SecretManagerServiceClient.create(
-            SecretManagerServiceSettings.newHttpJsonBuilder().build())) {
+        SecretManagerServiceClient.create()) {
       ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
 
       Duration ttl = Duration.newBuilder().setSeconds(900).build();
@@ -117,8 +105,7 @@ class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
   @Override
   public void notebook_operations() {
     String id = UUID.randomUUID().toString().substring(0, 6);
-    try (NotebookServiceClient notebookServiceClient =
-        NotebookServiceClient.create(NotebookServiceSettings.newBuilder().build())) {
+    try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {
       Instance instance =
           notebookServiceClient
               .createInstanceAsync(
