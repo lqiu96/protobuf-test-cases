@@ -2,18 +2,18 @@ This repo is a multi-module maven project to test the impact of Protobuf-Java wi
 
 # How to run
 ## Pre-Reqs (Read this section if there are any unexpected issues)
-- Java 17 (Install via https://sdkman.io/)
-- Maven (Can be installed via https://sdkman.io/)
+- Java 17+ (Install via https://sdkman.io/)
+- Maven 3.x (Can be installed via https://sdkman.io/)
 
 ## Steps
 1. A `setup.sh` shell script can be run to pull in and download the required Maven artifacts.
-The script will do a few things
-- Pull java-shared-configs and install the artifacts
-- Pull the Protobuf-Java split repo artifacts and install them 
-- Pull sdk-platform-java repo and install the Java SDK runtime artifacts. These artifacts have protobuf-java shaded and
-have protobuf-api as their dependencies 
-- Pull google-cloud-java and install a few select handwritten libraries with protobuf shaded. The modules that are shaded 
-are kms, speech, and secretmanager as they cover a breadth of common requests in the java-sdk
+The script will do a few things:
+- Pull java-shared-configs and install the artifacts (i.e. sets the Flatten Plugin version and eventually contains an exclusion list)
+- Pull the split Protobuf repo and installs the artifacts
+- Pull sdk-platform-java repo and install the Java SDK artifacts. These artifacts have protobuf-sdk shaded and have 
+protobuf-api as their dependencies 
+- Pull google-cloud-java and install a few select handwritten libraries with protobuf shaded. The modules that are shaded
+cover a breadth of common requests types in the java-sdk
 
 Note: If you do not wish to setup a Google Cloud project, you can skip the following steps and run `mvn clean install`.
 This will only run a subset of tests. If you want to run all the tests, continue with the following steps.
@@ -41,8 +41,13 @@ protobuf versions defined by the Java SDK
 4. third-party-library: Test customers who have third party libraries that bring in protobuf. These customers may define
 their own protobuf versions or may have a protobuf version defined by one of their dependencies
 
-Additionally, protobuf-library is a module that simulates a third party dependency with different versions of protobuf
-being brought in. This module is imported by `third-party-library` to simulate a library with protobuf.
+Additionally, there are a few additional non-testing modules
+- protobuf-library module simulates a third party dependency wraps the Java SDK client libraries and uses them with 
+different versions of protobuf. This module can bring in client libraries that are compiled and run with different versions
+of protobuf. This module is imported by `third-party-library` to simulate the functionalities for library with protobuf.
+- proto-test-case-helper module contains common interfaces that can be used by all test cases. Adding test cases to the
+interface prevents forgetting to add test cases to all required modules
+- parent-pom contains all the common properties and dependencies that is shared in all the modules
 
 # Maven Profiles
 There are two Maven profiles that can be called with these test cases
