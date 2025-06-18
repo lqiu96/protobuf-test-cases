@@ -4,6 +4,7 @@ import com.example.protobuf.Book;
 import org.junit.jupiter.api.Test;
 
 class TPLPostSplitGenCodePostSplitRuntimeTest {
+
   @Test
   void createBook() {
     String author = "myBookAuthor";

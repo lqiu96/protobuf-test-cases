@@ -10,30 +10,35 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 class TPLPostSplitLibraryPreSplitCompilePreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void kms_list() {
     PostSplitLibraryPreSplitCompile.kmsList();
   }
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void speech_recognize() {
     PostSplitLibraryPreSplitCompile.speechRecognize();
   }
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void secret_manager_CRUD() {
     PostSplitLibraryPreSplitCompile.secretManagerCRUD();
   }
 
   @Override
   @Test
+  @Timeout(value = 15, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void notebook_operations() {
     PostSplitLibraryPreSplitCompile.notebooksOperations();
   }

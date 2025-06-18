@@ -16,6 +16,7 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 import com.google.protobuf.Duration;
+import com.google.protobuf.FieldMask;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import com.google.protobuf.Parser;
@@ -73,7 +74,7 @@ public class PreSplitLibraryPostSplitCompile {
 
   // Use SecretManager API to run through the basic CRUD operations
   public static void secretManagerCRUD() {
-    String secretId = "mySecret";
+    String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
         SecretManagerServiceClient.create()) {
       ProjectName projectName = ProjectName.of(System.getenv("PROJECT_ID"));
@@ -93,6 +94,7 @@ public class PreSplitLibraryPostSplitCompile {
                   .build());
       secretManagerServiceClient.updateSecret(
           UpdateSecretRequest.newBuilder()
+              .setUpdateMask(FieldMask.newBuilder().addPaths("ttl").build())
               .setSecret(secret.toBuilder().setTtl(Duration.newBuilder().setSeconds(1000)))
               .build());
 

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * This tests that a third-party library that is compiled with Split-Protobuf is able to run with
@@ -39,24 +40,28 @@ class TPLPostSplitCodePreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void kms_list() {
     PostSplit.kmsList();
   }
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void speech_recognize() {
     PostSplit.speechRecognize();
   }
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void secret_manager_CRUD() {
     PostSplit.secretManagerCRUD();
   }
 
   @Override
   @Test
+  @Timeout(value = 15, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void notebook_operations() {
     PostSplit.notebooksOperations();
   }
