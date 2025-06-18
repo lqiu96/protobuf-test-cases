@@ -18,27 +18,16 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>protobuf-sdk</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
     <!-- Test with using the Pre-Split Runtimes -->
-<!--    <dependency>-->
-<!--      <groupId>com.google.protobuf</groupId>-->
-<!--      <artifactId>protobuf-java</artifactId>-->
-<!--      <version>${protobuf-java.version}</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>com.google.protobuf</groupId>
+      <artifactId>protobuf-java</artifactId>
+      <version>${protobuf-java.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>post-split-protobuf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>proto-test-case-helper</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <scope>test</scope>
-      <type>test-jar</type>
     </dependency>
   </dependencies>
 

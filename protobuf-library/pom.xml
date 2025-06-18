@@ -24,31 +24,9 @@
 
   <modules>
     <module>post-split-protobuf</module>
-    <module>pre-split-gen-code</module>
     <module>pre-split-protobuf</module>
-    <module>post-split-gen-code</module>
     <module>pre-split-protobuf-post-split-compile</module>
     <module>post-split-protobuf-pre-split-compile</module>
   </modules>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.example</groupId>
-        <artifactId>post-split-older</artifactId>
-        <version>1.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.example</groupId>
-        <artifactId>post-split-protobuf</artifactId>
-        <version>1.0-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>org.example</groupId>
-        <artifactId>pre-split-gen-code</artifactId>
-        <version>1.0-SNAPSHOT</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
 </project>

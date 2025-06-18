@@ -33,13 +33,7 @@
     <dependency>
       <groupId>org.example</groupId>
       <artifactId>post-split-protobuf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.example</groupId>
-      <artifactId>proto-test-case-helper</artifactId>
       <version>1.0-SNAPSHOT</version>
-      <scope>test</scope>
-      <type>test-jar</type>
     </dependency>
   </dependencies>
 
