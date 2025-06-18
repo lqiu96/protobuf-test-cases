@@ -33,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 class CustomerProtosPreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
@@ -99,6 +100,7 @@ class CustomerProtosPreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
 
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
         KeyManagementServiceClient.create()) {
@@ -120,6 +122,7 @@ class CustomerProtosPreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
   // Speech has custom RPCs (recognize)
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void speech_recognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
@@ -139,6 +142,7 @@ class CustomerProtosPreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
   // Use SecretManager API to run through the basic CRUD operations
   @Override
   @Test
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void secret_manager_CRUD() {
     String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
@@ -175,6 +179,8 @@ class CustomerProtosPreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
   }
 
   @Override
+  @Test
+  @Timeout(value = 30, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void notebook_operations() {
     String id = UUID.randomUUID().toString().substring(0, 6);
     try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {

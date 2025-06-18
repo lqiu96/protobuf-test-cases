@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import org.junit.jupiter.api.Test;
 
 /**
  * These test cases test that the Java-Sdk can make calls to Google Cloud and parse the response.
@@ -35,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   @Override
+  @Test
   public void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
         KeyManagementServiceClient.create(
@@ -52,6 +54,7 @@ class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   // Speech has custom RPCs (recognize)
   @Override
+  @Test
   public void speech_recognize() {
     try (SpeechClient speechClient =
         SpeechClient.create(SpeechSettings.newHttpJsonBuilder().build())) {
@@ -77,6 +80,7 @@ class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   // Use SecretManager API to run through the basic CRUD operations
   @Override
+  @Test
   public void secret_manager_CRUD() {
     String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
@@ -115,6 +119,7 @@ class JavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   // Use Java-Notebooks to test LROs
   @Override
+  @Test
   public void notebook_operations() {
     String id = UUID.randomUUID().toString().substring(0, 6);
     try (NotebookServiceClient notebookServiceClient =

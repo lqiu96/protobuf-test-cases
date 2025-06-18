@@ -22,10 +22,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import org.junit.jupiter.api.Test;
 
 class HttpJsonJavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   @Override
+  @Test
   public void kms_list() {
     try (KeyManagementServiceClient keyManagementServiceClient =
         KeyManagementServiceClient.create()) {
@@ -42,6 +44,7 @@ class HttpJsonJavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   // Speech has custom RPCs (recognize)
   @Override
+  @Test
   public void speech_recognize() {
     try (SpeechClient speechClient = SpeechClient.create()) {
       String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
@@ -66,6 +69,7 @@ class HttpJsonJavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   // Use SecretManager API to run through the basic CRUD operations
   @Override
+  @Test
   public void secret_manager_CRUD() {
     String secretId = String.format("secret%s", UUID.randomUUID().toString().substring(0, 6));
     try (SecretManagerServiceClient secretManagerServiceClient =
@@ -103,6 +107,7 @@ class HttpJsonJavaSdkRequestResponseTest implements BaseJavaSdkTestCases {
 
   // Use Java-Notebooks to test LROs
   @Override
+  @Test
   public void notebook_operations() {
     String id = UUID.randomUUID().toString().substring(0, 6);
     try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {
