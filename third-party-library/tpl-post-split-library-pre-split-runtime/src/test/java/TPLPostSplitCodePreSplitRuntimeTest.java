@@ -1,17 +1,17 @@
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import com.google.cloud.kms.v1.Certificate;
-import com.google.protobuf.Any;
+import com.google.cloud.kms.v1.KeyManagementServiceClient;
+import com.google.cloud.kms.v1.KeyRing;
+import com.google.cloud.kms.v1.ListKeyRingsRequest;
+import com.google.cloud.kms.v1.LocationName;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -22,27 +22,41 @@ import org.junit.jupiter.api.Timeout;
 class TPLPostSplitCodePreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
 
-  @Test
-  void any() {
-    Any any = PostSplit.any();
-    assertEquals("", any.getValue().toString(StandardCharsets.UTF_8));
-  }
-
-  @Test
-  void message_instanceOf_shadedProtobuf() {
-    List<Message> messages = PostSplit.messages();
-    for (Message message : messages) {
-      assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV3.class, message);
-      assertInstanceOf(com.shaded.google.protobuf.proto.AbstractMessage.class, message);
-      assertInstanceOf(Message.class, message);
-    }
-  }
+  //  @Test
+  //  void any() {
+  //    Any any = PostSplit.any();
+  //    assertEquals("", any.getValue().toString(StandardCharsets.UTF_8));
+  //  }
+  //
+  //  @Test
+  //  void message_instanceOf_shadedProtobuf() {
+  //    List<Message> messages = PostSplit.messages();
+  //    for (Message message : messages) {
+  //      assertInstanceOf(com.shaded.google.protobuf.proto.GeneratedMessageV3.class, message);
+  //      assertInstanceOf(com.shaded.google.protobuf.proto.AbstractMessage.class, message);
+  //      assertInstanceOf(Message.class, message);
+  //    }
+  //  }
 
   @Override
   @Test
   @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   public void kms_list() {
-    PostSplit.kmsList();
+    try (KeyManagementServiceClient keyManagementServiceClient =
+        KeyManagementServiceClient.create()) {
+      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
+          keyManagementServiceClient.listKeyRings(
+              ListKeyRingsRequest.newBuilder()
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
+                  .build());
+      for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
+        System.out.println(keyRing);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override

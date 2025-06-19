@@ -16,10 +16,8 @@
     <module>tpl-post-split-library-post-split-runtime</module>
     <module>tpl-pre-split-library-post-split-runtime</module>
     <module>tpl-post-split-library-pre-split-runtime</module>
-    <module>tpl-pre-split-library-post-split-compile-post-split-runtime</module>
-    <module>tpl-pre-split-library-post-split-compile-pre-split-runtime</module>
-    <module>tpl-post-split-library-pre-split-compile-post-split-runtime</module>
-    <module>tpl-post-split-library-pre-split-compile-pre-split-runtime</module>
+    <module>tpl-pre-split-library-post-split-runtime-pre-split-java-sdk</module>
+    <module>tpl-post-split-library-post-split-runtime-pre-split-java-sdk</module>
   </modules>
 
   <dependencyManagement>

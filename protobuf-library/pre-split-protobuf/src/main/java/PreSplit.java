@@ -1,3 +1,9 @@
+import com.google.cloud.kms.v1.KeyManagementServiceClient;
+import com.google.cloud.kms.v1.KeyRing;
+import com.google.cloud.kms.v1.ListKeyRingsRequest;
+import com.google.cloud.kms.v1.LocationName;
+import com.google.cloud.notebooks.v2.Instance;
+import com.google.cloud.notebooks.v2.NotebookServiceClient;
 import com.google.cloud.secretmanager.v1.ProjectName;
 import com.google.cloud.secretmanager.v1.Replication;
 import com.google.cloud.secretmanager.v1.Secret;
@@ -25,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class PreSplit {
 
@@ -41,6 +48,24 @@ public class PreSplit {
         Secret.newBuilder().build(),
         RecognitionConfig.newBuilder().build(),
         Replication.newBuilder().build());
+  }
+
+  public static void kmsList() {
+    try (KeyManagementServiceClient keyManagementServiceClient =
+        KeyManagementServiceClient.create()) {
+      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
+          keyManagementServiceClient.listKeyRings(
+              ListKeyRingsRequest.newBuilder()
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
+                  .build());
+      for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
+        System.out.println(keyRing);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   // Speech has custom RPCs (recognize)
@@ -98,6 +123,24 @@ public class PreSplit {
         secretManagerServiceClient.deleteSecret(s.getName());
       }
     } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public static void notebooksOperations() {
+    String id = UUID.randomUUID().toString().substring(0, 6);
+    try (NotebookServiceClient notebookServiceClient = NotebookServiceClient.create()) {
+      Instance instance =
+          notebookServiceClient
+              .createInstanceAsync(
+                  com.google.cloud.notebooks.v2.LocationName.of(
+                          System.getenv("PROJECT_ID"), System.getenv("ZONE"))
+                      .toString(),
+                  Instance.newBuilder().build(),
+                  String.format("instance%s", id))
+              .get();
+      notebookServiceClient.deleteInstanceAsync(instance.getName()).get();
+    } catch (IOException | ExecutionException | InterruptedException e) {
       throw new RuntimeException(e);
     }
   }

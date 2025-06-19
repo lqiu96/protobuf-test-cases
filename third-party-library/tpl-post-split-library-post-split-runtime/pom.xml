@@ -35,6 +35,12 @@
       <artifactId>post-split-protobuf</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
+    <!-- Test with modules that has been shaded already to remove protobuf runtime -->
+    <dependency>
+      <groupId>com.google.cloud</groupId>
+      <artifactId>google-cloud-kms</artifactId>
+      <version>${shading.version}</version>
+    </dependency>
   </dependencies>
 
   <profiles>

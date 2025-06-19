@@ -2,6 +2,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import com.google.cloud.kms.v1.Certificate;
+import com.google.cloud.kms.v1.KeyManagementServiceClient;
+import com.google.cloud.kms.v1.KeyRing;
+import com.google.cloud.kms.v1.ListKeyRingsRequest;
+import com.google.cloud.kms.v1.LocationName;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -10,32 +14,51 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
-class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
+class TPLPostSplitLibraryPostSplitRuntimePreSplitJavaSdkTest extends BaseAdvancedUseCaseTestCases
     implements BaseJavaSdkTestCases {
 
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Override
   @Test
   public void kms_list() {
-    PreSplitLibraryPostSplitCompile.kmsList();
+    try (KeyManagementServiceClient keyManagementServiceClient =
+        KeyManagementServiceClient.create()) {
+      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
+          keyManagementServiceClient.listKeyRings(
+              ListKeyRingsRequest.newBuilder()
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
+                  .build());
+      for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
+        System.out.println(keyRing);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Override
   @Test
   public void speech_recognize() {
-    PreSplitLibraryPostSplitCompile.speechRecognize();
+    PostSplit.speechRecognize();
   }
 
+  @Timeout(value = 5, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Override
   @Test
   public void secret_manager_CRUD() {
-    PreSplitLibraryPostSplitCompile.secretManagerCRUD();
+    PostSplit.secretManagerCRUD();
   }
 
+  @Timeout(value = 15, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
   @Override
   @Test
   public void notebook_operations() {
-    PreSplitLibraryPostSplitCompile.notebooksOperations();
+    PostSplit.notebooksOperations();
   }
 
   @Override
@@ -53,8 +76,7 @@ class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvanced
       fileCertificate.writeTo(outputStream);
     }
     Certificate certificate =
-        (Certificate)
-            PreSplitLibraryPostSplitCompile.mergeFrom(Certificate.newBuilder(), partialPath);
+        (Certificate) PostSplit.mergeFrom(Certificate.newBuilder(), partialPath);
     assertEquals(PARTIAL_ISSUER, certificate.getIssuer());
     assertEquals(PARTIAL_PARSED, certificate.getParsed());
     assertEquals(PARTIAL_SHA256, certificate.getSha256Fingerprint());
@@ -75,8 +97,7 @@ class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvanced
 
     Certificate newCertificate =
         (Certificate)
-            PreSplitLibraryPostSplitCompile.writeToFileReadFromFile(
-                certificate, certificate.getParserForType());
+            PostSplit.writeToFileReadFromFile(certificate, certificate.getParserForType());
     assertEquals(certificate.getIssuer(), newCertificate.getIssuer());
     assertEquals(certificate.getParsed(), newCertificate.getParsed());
     assertEquals(
@@ -98,8 +119,7 @@ class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvanced
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
 
-    Certificate result =
-        (Certificate) PreSplitLibraryPostSplitCompile.parserFromByteArray(certificate);
+    Certificate result = (Certificate) PostSplit.parserFromByteArray(certificate);
     assertEquals(result.getIssuer(), certificate.getIssuer());
     assertEquals(result.getParsed(), certificate.getParsed());
     assertEquals(result.getSha256FingerprintBytes(), certificate.getSha256FingerprintBytes());
@@ -135,8 +155,7 @@ class TPLPreSplitLibraryPostSplitCompilePreSplitRuntimeTest extends BaseAdvanced
             .setSha256Fingerprint("SHA256")
             .setNotAfterTime(Timestamp.newBuilder().setSeconds(50).setNanos(100).build())
             .build();
-    Certificate resetCertificate =
-        (Certificate) PreSplitLibraryPostSplitCompile.messageClear(certificate);
+    Certificate resetCertificate = (Certificate) PostSplit.messageClear(certificate);
     assertEquals("", resetCertificate.getIssuer());
     assertFalse(resetCertificate.getParsed());
     assertEquals("", resetCertificate.getSha256Fingerprint());
