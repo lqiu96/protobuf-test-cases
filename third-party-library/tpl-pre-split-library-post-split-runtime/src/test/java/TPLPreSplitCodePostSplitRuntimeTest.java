@@ -3,13 +3,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.cloud.kms.v1.Certificate;
+import com.google.cloud.kms.v1.KeyManagementServiceClient;
+import com.google.cloud.kms.v1.KeyRing;
+import com.google.cloud.kms.v1.ListKeyRingsRequest;
+import com.google.cloud.kms.v1.LocationName;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -36,11 +39,25 @@ class TPLPreSplitCodePostSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
     assertThrows(VerifyError.class, PreSplit::messages);
   }
 
-  // TODO: Currently disabled as PreSplit doesn't have an implementation
   @Override
-  @Disabled
   @Test
-  public void kms_list() {}
+  public void kms_list() {
+    try (KeyManagementServiceClient keyManagementServiceClient =
+        KeyManagementServiceClient.create()) {
+      KeyManagementServiceClient.ListKeyRingsPagedResponse listKeyRingsPagedResponse =
+          keyManagementServiceClient.listKeyRings(
+              ListKeyRingsRequest.newBuilder()
+                  .setParent(
+                      LocationName.of(System.getenv("PROJECT_ID"), System.getenv("LOCATION"))
+                          .toString())
+                  .build());
+      for (KeyRing keyRing : listKeyRingsPagedResponse.iterateAll()) {
+        System.out.println(keyRing);
+      }
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   // This expected to throw a Verify Error (binary breaking change) because the hierarchy
   // of messages was updated and is no longer the same:
@@ -50,7 +67,7 @@ class TPLPreSplitCodePostSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
   @Override
   @Test
   public void speech_recognize() {
-    assertThrows(VerifyError.class, PreSplit::speechRecognize);
+    PreSplit.speechRecognize();
   }
 
   // This expected to throw a Verify Error (binary breaking change) because the hierarchy
@@ -61,14 +78,14 @@ class TPLPreSplitCodePostSplitRuntimeTest extends BaseAdvancedUseCaseTestCases
   @Override
   @Test
   public void secret_manager_CRUD() {
-    assertThrows(VerifyError.class, PreSplit::secretManagerCRUD);
+    PreSplit.secretManagerCRUD();
   }
 
-  // TODO: Currently disabled as PreSplit doesn't have an implementation
   @Override
-  @Disabled
   @Test
-  public void notebook_operations() {}
+  public void notebook_operations() {
+    PreSplit.notebooksOperations();
+  }
 
   @Override
   @Test

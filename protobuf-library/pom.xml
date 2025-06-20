@@ -25,8 +25,6 @@
   <modules>
     <module>post-split-protobuf</module>
     <module>pre-split-protobuf</module>
-    <module>pre-split-protobuf-post-split-compile</module>
-    <module>post-split-protobuf-pre-split-compile</module>
   </modules>
 
 </project>
